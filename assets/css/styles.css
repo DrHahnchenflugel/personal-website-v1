@@ -14,7 +14,10 @@
 
 /* BASE */
 /* Smooth transition */
-html,body{transition:background-color .25s,color .25s;}
+html,body{
+    background: var(--bg);
+    color: var(--bg);
+    transition:background-color .25s, color .25s;}
 
 *{box-sizing:border-box}
 
