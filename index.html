@@ -1,89 +1,43 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Victor Lelikov</title>
-        <link rel="stylesheet" href="assets/css/styles.css">
-        <!-- Tailwind -->
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="assets/css/styles.css" />
     </head>
 
-    <body class="min-h-screen bg-[var(--bg)] text-[var(--fg)] antialiased">
-        <!-- Header -->
-        <header class="border-b border-[var(--border)]/60">
-            <div class="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-                <a class="font-medium tracking-wide" href="/">Victor</a>
-                <nav class="flex gap-6 text-sm text-[var(--muted)]">
-                    <a class="hover:text-[var(--fg)]" href="/projects/">Projects</a>
-                    <a class="hover:text-[var(--fg)]" href="/selfhosting/">Home Server</a>
-                    <a class="hover:text-[var(--fg)]" href="/about/">About</a>
-                    <a class="hover:text-[var(--fg)]" href="/contact/">Contact</a>
+    <body>
+        <header>
+            <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
+                <a href="/" style="font-weight:600; color:var(--fg); text-decoration:none;">Victor Lelikov</a>
+                <nav>
+                    <a href="/projects/">Projects</a>
+                    <a href="/homelab/">About This Site</a>
+                    <a href="/contact/">Contact</a>
                 </nav>
             </div>
         </header>
 
-        <!-- Hero -->
-        <section class="py-14">
-            <div class="mx-auto max-w-6xl px-4 grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                    <h1 class="text-4xl md:text-5xl font-semibold leading-tight">
-                        Hi There!
-                    </h1>
-                    <p class="mt-4 text-[var(--muted)] max-w-prose">
-                        I'm a computer engineering student @ TMU. I also do a bunch of stuff @ Exceed Robotics.
-                    </p>
-                    <div class="mt-6 flex gap-3">
-                        <a href="#projects"
-                            class="inline-flex items-center justify-center rounded-lg px-4
-                                py-2 bg-[var(--accent)] text-[var(--bg)] font-medium">
-
-                            Projects
-                        </a>
-                        <a href="#contact"
-                            class="inline-flex items-center justify-center rounded-lg px-4
-                                py-2 border border-[var(--border)] hover:bg-[var(--card)]">
-
-                            Contact
-                        </a>
-                    </div>
+        <main>
+            <section>
+                <div class="container">
+                    <h1>Hi There!</h1>
+                    <p class="muted">I'm Victor, glad to have you here! I'm a third-year comp-eng student @ TMU.</p>
+                    <p class="muted">I also do a bunch of other things @ Exceed Robotics.</p>
                 </div>
-                <div class="rounded-2xl bg-[var(--card)] border border-[var(--border)] h-48
-                        md:h-64 flex items-center justify-center text-sm text-[var(--muted)]">
-                    hero image
+            </section>
+
+            <section id="projects">
+                <div class="container">
+                    <h2>Some Stuff I Did</h2>
+                    <ul>
+                        <li><strong>Maintenance App:</strong>Simple CMMS I built (HTML/CSS + Flask + Postgres).</li>
+                        <li><strong>Homelab:</strong>My Personal Server (Too Much To List)</li>
+                        <li><strong>Simulated CPU:</strong>8-bit CPU simulated via an FSM on an Altera CycloneII FPGA</li>
+                    </ul>
                 </div>
-            </div>
-        </section>
-
-        <!-- Projects -->
-        <section id="projects" class="py-12 border-t border-[var(--border)]/60">
-            <div class="mx-auto max-w-6xl px-4">
-                <h2 class="text-2xl font-semibold">Stuff I'm working on right now</h2>
-                <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Card -->
-                    <article class="rounded-2xl bg-[var(--card)] border border-[var(--border)] p-5 hover:shadow hover:shadow-black/20 transition-shadow">
-                        <h3 class="font-medium">first proj</h3>
-                        <p class="mt-2 text-sm text-[var(--muted)]">
-                            its a super cool thing here
-                        </p>
-                    </article>
-
-                    <article class="rounded-2xl bg-[var(--card)] border border-[var(--border)] p-5 hover:shadow hover:shadow-black/20 transition-shadow">
-                        <h3 class="font-medium">second proj</h3>
-                        <p class="mt-2 text-sm text-[var(--muted)]">
-                            its a twoper cool thing here
-                        </p>
-                    </article>
-
-                    <article class="rounded-2xl bg-[var(--card)] border border-[var(--border)] p-5 hover:shadow hover:shadow-black/20 transition-shadow">
-                        <h3 class="font-medium">third project</h3>
-                        <p class="mt-2 text-sm text-[var(--muted)]">
-                            its a threeper cool thing here
-                        </p>
-                    </article>
-                </div>
-                <a class="hover:text-[var(--fg)]" href="/projects/">More stuff I did</a>
-            </div>
-        </section>
+            </section>
+        </main>
     </body>
 </html>

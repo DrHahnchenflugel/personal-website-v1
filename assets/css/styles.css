@@ -1,22 +1,38 @@
-/* DEFAULT THEME */
-:root {
-  --bg:       #0f1218;
-  --fg:       #e8d9c3;
-  --muted:    #cbd5e199;
-  --card:     #121520;
-  --border:   #2a2f3a;
-  --accent:   #d7b46a;
+/* THEMES */
+:root{
+  --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
+  --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
 }
-
-/* OTHER THEMES */
-:root[data-theme="light"] {
+:root[data-theme="light"]{
   --bg:#f6f6f7; --fg:#111318; --muted:#334155cc;
   --card:#ffffff; --border:#e5e7eb; --accent:#7fa4d8;
 }
-:root[data-theme="dark"] {
+:root[data-theme="dark"]{
   --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
   --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
 }
 
-/* smooth colour swaps */
-html, body { transition: background-color .25s ease, color .25s ease; }
+/* BASE */
+/* Smooth transition */
+html,body{transition:background-color .25s,color .25s;}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+}
+
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* LAYOUT */
+.container{max-width:900px; margin:0 auto; padding:0 16px}
+header{border-bottom:1px solid var(--border); padding:12px 0}
+nav a{color:var(--muted); margin-left:12px}
+section{padding:24px 0}
+
+/* TYPE */
+h1{margin:24px 0 8px; font-size:28px; line-height:1.25}
+h2{margin:24px 0 8px; font-size:22px; line-height:1.25}
+.muted{color:var(--muted)}
