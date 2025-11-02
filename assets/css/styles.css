@@ -36,3 +36,13 @@ section{padding:24px 0}
 h1{margin:24px 0 8px; font-size:28px; line-height:1.25}
 h2{margin:24px 0 8px; font-size:22px; line-height:1.25}
 .muted{color:var(--muted)}
+
+/* CONTENT */
+/* flex row for header */
+.row{display:flex;align-items:center;justify-content:space-between;}
+/* divider after the hero */
+section + section{border-top:1px solid var(--border);}
+/* list info */
+ul{padding-left:1.1rem}
+li{margin:6px 0}
+li strong{margin-right:6px}
