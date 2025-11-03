@@ -59,7 +59,62 @@
                 </div>
             </footer>
         </main>
-        <style>#projects a.card{outline:3px solid red !important; height:220px !important; display:block !important;}</style>
+        <style>
+            /* PROJECT CARDS — make <a> behave like cards */
+            .cards{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+
+            a.card{
+              display:block;                 /* key */
+              position:relative;
+              height:220px;                  /* simple, visible size; or use aspect-ratio:1/1 */
+              border-radius:1rem; overflow:hidden; isolation:isolate;
+              padding:14px; background:var(--card);
+              color:#fff; text-decoration:none;
+              box-shadow:0 2px 12px rgba(0,0,0,.25);
+              transition:transform .2s ease;
+            }
+            a.card:hover{ transform:translateY(-2px); text-decoration:none; } /* kill underline */
+
+            /* keep text above overlays */
+            a.card > *{ position:relative; z-index:1; }
+
+            /* image (under) */
+            a.card::before{
+              content:""; position:absolute; inset:0; z-index:0;
+              background-image:var(--img, none);
+              background-size:cover; background-position:center;
+              filter:blur(6px) brightness(.55) saturate(.9);
+              transform:scale(1.08);
+              transition:filter .25s ease, transform .25s ease;
+            }
+            /* gradient (over) */
+            a.card::after{
+              content:""; position:absolute; inset:0; z-index:0;
+              background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 100%);
+              opacity:.9; transition:opacity .25s ease;
+            }
+            a.card:hover::before{ filter:blur(3px) brightness(.75) saturate(1); transform:scale(1.12); }
+            a.card:hover::after{ opacity:1; }
+
+            /* title/body */
+            a.card h3{ margin:0 0 4px 0; font:800 20px/1.15 Georgia,"Times New Roman",serif; color:inherit; }
+            a.card p { margin:0; font-size:13px; opacity:.92; color:inherit; }
+
+            #projects .cards{
+              display:grid; gap:16px;
+              grid-template-columns: repeat(auto-fit, minmax(var(--card-w), 1fr));
+            }
+
+            #projects a.card{
+              display:block; position:relative;
+              height: var(--card-h);           /* % of screen height */
+              border-radius:1rem; overflow:hidden; isolation:isolate;
+              padding:14px; background:var(--card);
+              color:#fff; text-decoration:none;
+              box-shadow:0 2px 12px rgba(0,0,0,.25);
+              transition:transform .2s ease;
+            }
+        </style>
         <script src="assets/js/theme.js" defer></script>
     </body>
 </html>
