@@ -50,3 +50,38 @@ section + section{border-top:1px solid var(--border);}
 ul{padding-left:1.1rem}
 li{margin:6px 0}
 li strong{margin-right:6px}
+
+/* PROJECT CARDS */
+.cards{
+  display:grid; gap:16px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+}
+
+.card{
+  /* per-card image: set inline with style="--img: url('...')" */
+  position:relative; border-radius:1rem; overflow:hidden; isolation:isolate;
+  aspect-ratio:1/1; padding:14px; color:#fff; text-decoration:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+  transition:transform .2s ease;
+}
+.card:hover{ transform:translateY(-2px); }
+
+.card::before{
+  content:""; position:absolute; inset:0;
+  background-image: var(--img);
+  background-size:cover; background-position:center;
+  filter:blur(6px) brightness(.55) saturate(.9);
+  transform:scale(1.08);
+  transition:filter .25s ease, transform .25s ease, opacity .25s ease;
+}
+.card::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 100%);
+  opacity:.9; transition:opacity .25s ease;
+}
+.card:hover::before{ filter:blur(3px) brightness(.75) saturate(1); transform:scale(1.12); }
+.card:hover::after{ opacity:1; }
+
+/* Title contrast */
+.card h3{ margin:0 0 4px 0; font:800 20px/1.15 Georgia,"Times New Roman",serif; }
+.card p{  margin:0; font-size:13px; opacity:.92; }

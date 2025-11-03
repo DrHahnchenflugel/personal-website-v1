@@ -13,11 +13,11 @@
         <header>
             <div class="container row">
                 <a href="/" style="font-weight:600; color:var(--fg); text-decoration:none;">Victor Lelikov</a>
-                <a href="#" id="themeToggle">Turn on the lights</a>
                 <nav>
                     <a href="/projects/">Projects</a>
                     <a href="/homelab/">About This Site</a>
                     <a href="/contact/">Contact</a>
+                    <a href="#" id="themeToggle">Turn off the lights!</a>
                 </nav>
             </div>
         </header>
@@ -32,14 +32,26 @@
             </section>
 
             <section id="projects">
-                <div class="container">
+                <section class="container">
                     <h2>Some Stuff I Did</h2>
-                    <ul>
-                        <li><strong>Maintenance App:</strong>Simple CMMS I built (HTML/CSS + Flask + Postgres).</li>
-                        <li><strong>Homelab:</strong>My Personal Server (Too Much To List)</li>
-                        <li><strong>Simulated CPU:</strong>8-bit CPU simulated via an FSM on an Altera CycloneII FPGA</li>
-                    </ul>
-                </div>
+
+                    <div class="cards">
+                        <a class="card" href="/projects/maintenance" style="--img: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F011%2F973%2F413%2Foriginal%2Fcat-face-cute-free-download-transparent-image-illustration-clipart-pet-wildlife-free-png.png')">
+                            <h3>Maintenance App</h3>
+                            <p>Simple CMMS (HTML/CSS · Flask · Postgres)</p>
+                        </a>
+
+                        <a class="card" href="/projects/homelab" style="--img: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F011%2F973%2F413%2Foriginal%2Fcat-face-cute-free-download-transparent-image-illustration-clipart-pet-wildlife-free-png.png')">
+                            <h3>Homelab</h3>
+                            <p>My personal server stack</p>
+                        </a>
+
+                        <a class="card" href="/projects/cpu" style="--img: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F011%2F973%2F413%2Foriginal%2Fcat-face-cute-free-download-transparent-image-illustration-clipart-pet-wildlife-free-png.png')">
+                            <h3>Simulated CPU</h3>
+                            <p>8-bit CPU via FSM on Cyclone II FPGA</p>
+                        </a>
+                    </div>
+                </section>
             </section>
 
             <footer>
