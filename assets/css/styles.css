@@ -2,14 +2,20 @@
 :root{
   --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
   --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
+  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
+  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
 }
 :root[data-theme="light"]{
   --bg:#f6f6f7; --fg:#111318; --muted:#334155cc;
   --card:#ffffff; --border:#e5e7eb; --accent:#7fa4d8;
+  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
+  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
 }
 :root[data-theme="dark"]{
   --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
   --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
+  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
+  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
 }
 
 /* BASE */
@@ -93,3 +99,18 @@ a.card:hover::after{ opacity:1; }
 /* title/body */
 a.card h3{ margin:0 0 4px 0; font:800 20px/1.15 Georgia,"Times New Roman",serif; color:inherit; }
 a.card p { margin:0; font-size:13px; opacity:.92; color:inherit; }
+
+#projects .cards{
+  display:grid; gap:16px;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-w), 1fr));
+}
+
+#projects a.card{
+  display:block; position:relative;
+  height: var(--card-h);           /* % of screen height */
+  border-radius:1rem; overflow:hidden; isolation:isolate;
+  padding:14px; background:var(--card);
+  color:#fff; text-decoration:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+  transition:transform .2s ease;
+}
