@@ -55,12 +55,12 @@
 
             <footer>
                 <div class="container">
-                    v1.18
+                    v1.19
                 </div>
             </footer>
         </main>
         <style>
-            /* PROJECT CARDS — make <a> behave like cards */
+            /* PROJECT CARDS — make <a> behave like cards - TAILWIND SO MUST BE HERE */
             .cards{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
 
             a.card{
@@ -102,17 +102,39 @@
 
             #projects .cards{
               display:grid; gap:16px;
-              grid-template-columns: repeat(auto-fit, minmax(var(--card-w), 1fr));
+              grid-template-columns: 1fr;
+            }
+            @media (min-width:560px){
+              #projects .cards{ grid-template-columns: repeat(2, 1fr); }
+            }
+            @media (min-width:900px){
+              #projects .cards{ grid-template-columns: repeat(3, 1fr); }
             }
 
+            /* Square cards with content pinned to bottom */
             #projects a.card{
-              display:block; position:relative;
-              height: var(--card-h);           /* % of screen height */
+              display:flex; flex-direction:column; justify-content:flex-end;
+              aspect-ratio: 1 / 1;        /* ← makes perfect squares */
+              height:auto;                /* remove fixed height */
               border-radius:1rem; overflow:hidden; isolation:isolate;
               padding:14px; background:var(--card);
               color:#fff; text-decoration:none;
               box-shadow:0 2px 12px rgba(0,0,0,.25);
               transition:transform .2s ease;
+            }
+
+            /* Tweak overlays so the image is visible */
+            #projects a.card::before{
+              content:""; position:absolute; inset:0; z-index:0;
+              background-image:var(--img, none);
+              background-size:cover; background-position:center;
+              filter: blur(4px) brightness(.75) saturate(1);
+              transform: scale(1.08);
+            }
+            #projects a.card::after{
+              content:""; position:absolute; inset:0; z-index:0;
+              background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
+              opacity: .95;
             }
         </style>
         <script src="assets/js/theme.js" defer></script>
