@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maintenance App - Victor Lelikov</title>
+
+    <!-- paint viewport to avoid white flash -->
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="../../assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="../../assets/css/projects/projects.css?v=dev2" />
+  </head>
+
+  <body>
+    <header>
+      <div class="container row">
+        <a href="/" style="font-weight:600; color:var(--fg); text-decoration:none;">Victor Lelikov</a>
+        <nav>
+          <a href="/projects/">Projects</a>
+          <a href="/homelab/">About This Site</a>
+          <a href="/contact/">Contact</a>
+          <a href="#" id="themeToggle">Turn on the lights</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+        <section class="project-hero">
+        <div class="container">
+            <div class="project-crumbs muted">Projects / Self-Hosted Infrastructure</div>
+            <h1 class="project-title">Self-Hosted Infrastructure</h1>
+            <p class="project-sub muted">
+            A personally operated server stack for running production services without relying on managed platforms.
+            </p>
+
+            <div class="project-meta">
+            <span class="pill">Proxmox</span>
+            <span class="pill">Docker</span>
+            <span class="pill">Linux</span>
+            <span class="pill">Cloudflare Tunnel</span>
+            <span class="pill">PostgreSQL</span>
+            </div>
+
+            <div class="project-actions">
+            <a class="btn" href="/projects/"> Back to Projects</a>
+            </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>What this is</h2>
+            <p>
+            This is a self-hosted environment I use to run services: internal tools, personal apps,
+            and infrastructure that needs to stay online and recover cleanly when something breaks.
+            </p>
+
+            <p class="muted">
+            It is not a demo setup. It exists because I need control over deployment, data, and failure modes.
+            </p>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>Why I built it</h2>
+
+            <p>
+            I wanted an environment where I can:
+            </p>
+
+            <ul>
+            <li>Run services without external dependencies.</li>
+            <li>Understand exactly how traffic reaches each app.</li>
+            <li>Control upgrades, downtime, and recovery.</li>
+            <li>Fix problems directly instead of working around them.</li>
+            </ul>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <div class="callout">
+            <strong>Design constraint:</strong>
+            All services run on hardware I control. If I can't deploy it, back it up, and restore it myself,
+            it's not an acceptable dependency.
+            </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>What runs on it</h2>
+
+            <ul>
+            <li>Internal web apps.</li>
+            <li>PostgreSQL databases with local backups.</li>
+            <li>Media and automation services isolated from core systems.</li>
+            <li>Reverse proxy and tunnel-based ingress.</li>
+            </ul>
+
+            <p class="muted">
+            Services are segmented. Not everything can see everything else, and nothing is exposed without intent.
+            </p>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>Technical approach</h2>
+
+            <div class="grid-2">
+            <div class="card-lite">
+                <h3>Infrastructure</h3>
+                <ul>
+                <li>Proxmox host with VMs and containers.</li>
+                <li>Linux-based guests with minimal base installs.</li>
+                <li>Snapshots and backups treated as first-class requirements.</li>
+                </ul>
+            </div>
+
+            <div class="card-lite">
+                <h3>Application layer</h3>
+                <ul>
+                <li>Docker Compose for service definition.</li>
+                <li>Explicit networking between containers.</li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>What this is not</h2>
+            <ul>
+            <li>Not a “cloud replacement” experiment.</li>
+            <li>Not optimized for infinite scale.</li>
+            <li>Not dependent on fragile automation.</li>
+            </ul>
+
+            <p class="muted">
+            The goal is reliability and understanding, not novelty.
+            </p>
+        </div>
+        </section>
+
+        <section>
+        <div class="container">
+            <h2>Next steps</h2>
+            <ul>
+            <li>Stricter role separation for sensitive services.</li>
+            <li>More aggressive backup verification.</li>
+            <li>Documented recovery procedures for every critical service.</li>
+            </ul>
+        </div>
+        </section>
+
+
+      <footer>
+        <div class="container">
+          v0.1
+        </div>
+      </footer>
+    </main>
+
+    <script src="/assets/js/theme.js" defer></script>
+  </body>
+</html>
