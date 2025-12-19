@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maintenance App - Victor Lelikov</title>
+
+    <!-- paint viewport to avoid white flash -->
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="../../assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="../../assets/css/projects/projects.css?v=dev2" />
+  </head>
+
+  <body>
+    <header>
+      <div class="container row">
+        <a href="/" style="font-weight:600; color:var(--fg); text-decoration:none;">Victor Lelikov</a>
+        <nav>
+          <a href="/projects/">Projects</a>
+          <a href="/homelab/">About This Site</a>
+          <a href="/contact/">Contact</a>
+          <a href="#" id="themeToggle">Turn on the lights</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / Maintenance App</div>
+          <h1 class="project-title">Maintenance App</h1>
+          <p class="project-sub muted">
+            A simple CMMS for tracking issues, assets, and maintenance activity across sites for Exceed Robotics.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">Flask</span>
+            <span class="pill">PostgreSQL</span>
+            <span class="pill">HTML/CSS</span>
+            <span class="pill">Self-hosted</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">← Back to Projects</a>
+            <a class="btn btn-primary" href="https://github.com/DrHahnchenflugel/MaintenanceApplication" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- What it does -->
+      <section>
+        <div class="container">
+          <h2>What it does</h2>
+          <ul>
+            <li><strong>Issue tracking:</strong> open > in progress > closed, with status history.</li>
+            <li><strong>Updates/activity log:</strong> comments + actions tied to an issue timeline.</li>
+            <li><strong>Asset linking:</strong> issues can attach to an asset (tag/model/site).</li>
+            <li><strong>Fast filtering:</strong> status, category, site/asset, search.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Why / constraints -->
+      <section>
+        <div class="container">
+            Our “maintenance system” was:
+            <ul>
+            <li>See which robot was sitting in the maintenance box.</li>
+            <li>Assume someone remembered to post the issue in Slack.</li>
+            <li>Fix it if parts happened to be available.</li>
+            </ul>
+
+            <p>
+            There was no source of truth, no history, and no accountability. As soon as
+            multiple sites and instructors were involved, this stopped working.
+            </p>
+
+            <p>
+            I built this app to enforce a single, simple workflow: issues must be logged,
+            they must be tied to a specific asset, and they stay visible until they are
+            closed.
+            </p>
+
+            </p>
+            <div class="callout">
+        </div>
+      </section>
+
+      <!-- Screenshots -->
+      <section>
+        <div class="container">
+          <h2>Screenshots</h2>
+
+          <div class="shots">
+            <figure class="shot">
+              <img src="/assets/img/projects/cmms/CMMS_IssuePage.png" alt="Issue page screenshot" loading="lazy" />
+              <figcaption class="muted">Issue details + activity + status changes.</figcaption>
+            </figure>
+
+            <figure class="shot">
+              <img src="/assets/img/projects/cmms/CMMS_IssuesList.png" alt="Issues list screenshot" loading="lazy" />
+              <figcaption class="muted">Issues list with filters (status/category/search).</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- Technical notes -->
+      <section>
+        <div class="container">
+          <h2>Technical notes</h2>
+          <div class="grid-2">
+            <div class="card-lite">
+              <h3>Backend</h3>
+              <ul>
+                <li>Flask app with a small service/db layer split.</li>
+                <li>Postgres as source of truth.</li>
+                <li>Local server-rendered pages for speed and simplicity.</li>
+              </ul>
+            </div>
+
+            <div class="card-lite">
+              <h3>Frontend</h3>
+              <ul>
+                <li>Plain HTML templates + a consistent CSS token set.</li>
+                <li>Minimal JS.</li>
+                <li>Mobile/tablet tweaks - the app should work for all devices, else it will never be used.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Next steps -->
+      <section>
+        <div class="container">
+          <h2>Next steps</h2>
+          <ul>
+            <li>- Finish:</li><br>
+            <li>  > Dashboard</li><br>
+            <li>  > Issue Creation</li><br>
+            <li>  > App Settings on a per-user basis</li><br>
+            <li>- Deploy and test at one location</li>
+            <li>- Bug-fix with results from test</li>
+            <li>- Deploy across all locations</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <div class="container">
+          v0.1
+        </div>
+      </footer>
+    </main>
+
+    <script src="/assets/js/theme.js" defer></script>
+  </body>
+</html>
