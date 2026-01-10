@@ -17,6 +17,7 @@
     })
     .then(html => {
       target.innerHTML = html;
+      document.dispatchEvent(new Event('header:loaded'));
       highlightActiveLink();
     })
     .catch(err => {
