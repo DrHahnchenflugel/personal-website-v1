@@ -136,14 +136,8 @@
               background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
               opacity: .95;
             }
-
-            /* Site header */
-            fetch("/partials/header.html")
-                .then(r => r.text())
-                .then(html => {
-                  document.getElementById("site-header").innerHTML = html;
-            });
         </style>
         <script src="assets/js/theme.js" defer></script>
+        <script src="/assets/js/header.js" defer></script>
     </body>
 </html>
