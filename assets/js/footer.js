@@ -1,27 +1,27 @@
 (function () {
-  const targetId = "site-header";
-  const headerPath = "/partials/header.html";
+  const targetId = "site-footer";
+  const headerPath = "/partials/footer.html";
 
   const target = document.getElementById(targetId);
   if (!target) {
-    console.warn("[header.js] #site-header not found");
+    console.warn("[footer.js] #site-footer not found");
     return;
   }
 
   fetch(headerPath)
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to load header (${response.status})');
+        throw new Error('Failed to load footer (${response.status})');
       }
       return response.text();
     })
     .then(html => {
       target.innerHTML = html;
-      document.dispatchEvent(new Event('header:loaded'));
+      document.dispatchEvent(new Event('footer:loaded'));
       highlightActiveLink();
     })
     .catch(err => {
-      console.error("[header.js]", err);
+      console.error("[footer.js]", err);
     });
 
   function highlightActiveLink() {
