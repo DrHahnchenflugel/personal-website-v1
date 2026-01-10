@@ -1,10 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FPGA Doohicky - Victor Lelikov</title>
 
-</body>
+    <!-- paint viewport to avoid white flash -->
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="../../assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="../../assets/css/projects/projects.css?v=dev2" />
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <!-- Hero -->
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey</div>
+          <h1 class="project-title">FPGA Doohickey</h1>
+          <p class="project-sub muted">
+            A Cyclone IV FPGA-powered interactive hardware toy using buttons and potentiometers as inputs
+              and an I2C OLED screen & LEDS as outputs - all coded in SystemVerilog.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">FPGA</span>
+            <span class="pill">SystemVerilog</span>
+            <span class="pill">I2C</span>
+            <span class="pill">Digital Design</span>
+            <span class="pill">Signal Generation</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">← Back to Projects</a>
+            <a class="btn btn-primary" href="#" target="_blank" rel="noopener">GitHub [Not Created Yet]</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- What -->
+      <section>
+        <div class="container">
+          <h2>What is this?</h2>
+          <ul>
+              <li><strong>This project is a small, self-contained FPGA "toy" designed to be poked,
+                  prodded, twisted, and experimented with.</strong></li>
+              <br>
+              Physical inputs (buttons, switches, knobs, sliders) directly control visible outputs: an OLED transforming
+              a live waveform and a bunch of LEDs running patterns that also react to user input. There's no abstraction
+              layer, no software UI, and no microcontroller doing the thinking - the FPGA is the system itself.
+          </ul>
+        </div>
+      </section>
+
+      <!-- Why -->
+      <section>
+        <div class="container">
+            I wanted a physical FPGA project that wasn't a lab assignment, or a project for a project's sake.
+
+            The goal is twofold. I wanted:
+            <ul>
+                <li>An FPGA project</li>
+                <li>A toy that kids could play with while waiting for class</li>
+            </ul>
+
+            <div class="callout">
+                <p>
+                For younger students, it should be physically engaging - lights animate on their own, patterns shift,
+                    and turning a knob or pushing a button obviously does something.
+                </p>
+                <p>
+                For older students, it should be something they can actually learn from. THe controls are mapped to
+                    real concepts: amplitude, frequency, signal inversion, function selection, and pattern generation.
+                    Also, flashy lights.
+                </p>
+            </div>
+
+            Under the hood, it's meant to demonstrate digital design ideas: synchronous logic, timing, statem machines,
+            pseudo-random behavior, and simple waveform generation. It does all this without hiding everything behind a
+            CPU or firmware layer.
+        </div>
+      </section>
+
+      <!-- Logs -->
+      <h2>Project Logs</h2>
+      <section>
+          <div class="container">
+            <b>10/01/2026</b>
+            Wordswordwordswords words and more words
+          </div>
+      </section>
+
+      <div id="site-footer"></div>
+    </main>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
 </html>
