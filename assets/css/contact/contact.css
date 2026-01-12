@@ -61,6 +61,7 @@
 }
 
 .page-title {
+  color: var(--fg);
   font-size:30px;
   font-weight:900;
   line-height:2;
