@@ -47,56 +47,73 @@
 
       <!-- What -->
       <section>
-        <div class="container">
-          <h2>What is this?</h2>
-          <ul>
-              <li><strong>This project is a small, self-contained FPGA "toy" designed to be poked,
-                  prodded, twisted, and experimented with.</strong></li>
-              <br>
-              Physical inputs (buttons, switches, knobs, sliders) directly control visible outputs: an OLED transforming
-              a live waveform and a bunch of LEDs running patterns that also react to user input. There's no abstraction
-              layer, no software UI, and no microcontroller doing the thinking - the FPGA is the system itself.
-          </ul>
-        </div>
-      </section>
+          <div class="container">
+            <h2>What is this?</h2>
+
+            <p>
+              This is a small, self-contained FPGA toy built to be touched, twisted, and
+              messed with.
+            </p>
+
+            <p>
+              Physical inputs: buttons, switches, knobs, and sliders. They drive visible outputs:
+                an OLED displaying a live waveform and a set of LEDs running reactive patterns.
+                There’s no software UI, no microcontroller, and no  abstraction layer.
+            </p>
+          </div>
+        </section>
+
 
       <!-- Why -->
       <section>
-        <div class="container">
-            I wanted a physical FPGA project that wasn't a lab assignment, or a project for a project's sake.
+          <div class="container">
+            <h2>Why build it?</h2>
 
-            The goal is twofold. I wanted:
+            <p>
+              I wanted a physical FPGA project that wasn’t a lab assignment or a project
+              built purely for a resume. The goal was simple:
+            </p>
+
             <ul>
-                <li>An FPGA project</li>
-                <li>A toy that kids could play with while waiting for class</li>
+              <li>Build a real FPGA-based system</li>
+              <li>Make something fun enough that kids would actually want to play with</li>
             </ul>
 
             <div class="callout">
-                <p>
-                For younger students, it should be physically engaging - lights animate on their own, patterns shift,
-                    and turning a knob or pushing a button obviously does something.
-                </p>
-                <p>
-                For older students, it should be something they can actually learn from. THe controls are mapped to
-                    real concepts: amplitude, frequency, signal inversion, function selection, and pattern generation.
-                    Also, flashy lights.
-                </p>
+              <p>
+                For younger students, it’s immediately engaging. Lights animate on their
+                own, patterns shift, and every control produces an obvious response.
+              </p>
+
+              <p>
+                For older students, it’s educational without being watered down. Controls
+                map directly to real concepts: amplitude, frequency, signal inversion,
+                function selection, and pattern generation.
+              </p>
             </div>
 
-            Under the hood, it's meant to demonstrate digital design ideas: synchronous logic, timing, statem machines,
-            pseudo-random behavior, and simple waveform generation. It does all this without hiding everything behind a
-            CPU or firmware layer.
-        </div>
-      </section>
+            <p>
+              Under the hood, it’s all pretty straightforward digital design: synchronous logic,
+              timing, state machines, pseudo-random behavior, and simple waveform
+              generation, all of which implemented directly in hardware.
+            </p>
+          </div>
+        </section>
+
 
       <!-- Logs -->
       <h2>Project Logs</h2>
-      <section>
+        <section>
           <div class="container">
-            <b>10/01/2026</b>
+            <p class="muted">
+              Build notes, design decisions, and progress updates as the project evolves.
+            </p>
+
+            <b>10/01/2026</b><br>
             Wordswordwordswords words and more words
           </div>
-      </section>
+        </section>
+
 
       <div id="site-footer"></div>
     </main>
