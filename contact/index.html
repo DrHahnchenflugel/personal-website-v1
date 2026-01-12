@@ -16,92 +16,94 @@
   <body>
     <!-- Header -->
     <div id="site-header"></div>
+    <main>
+        <!-- Contact -->
+        <section class="contact-hero">
+          <div class="container">
+            <h1>Questions? Comments?<br>Concerns? Complaints?</h1>
+            <p class="muted">Here's how you can find me:</p>
 
-    <!-- Contact -->
-    <section class="contact-hero">
-      <div class="container">
-        <h1>Questions? Comments?<br>Concerns? Complaints?</h1>
-        <p class="muted">Here's how you can find me:</p>
+            <div class="cards">
+              <!-- Email -->
+              <div class="card">
+                <div class="kicker">
+                  <span class="icon" aria-hidden="true">
+                    <!-- Mail icon -->
+                  </span>
+                  Email
+                </div>
+                <div class="title">victor.lelikov@protonmail.com</div>
+                <div class="desc">Questions about my projects? Shoot me an email.</div>
+                <div class="actions">
+                  <a class="btn primary" href="mailto:victor.lelikov@protonmail.com">Mail</a>
+                  <button class="btn" type="button"
+                    onclick="navigator.clipboard.writeText('victor.lelikov@protonmail.com'); const t=this; t.textContent='Copied'; setTimeout(()=>t.textContent='Copy', 1200);">
+                    Copy
+                  </button>
+                </div>
+              </div>
 
-        <div class="cards">
-          <!-- Email -->
-          <div class="card">
-            <div class="kicker">
-              <span class="icon" aria-hidden="true">
-                <!-- Mail icon -->
-              </span>
-              Email
-            </div>
-            <div class="title">victor.lelikov@protonmail.com</div>
-            <div class="desc">Questions about my projects? Shoot me an email.</div>
-            <div class="actions">
-              <a class="btn primary" href="mailto:victor.lelikov@protonmail.com">Mail</a>
-              <button class="btn" type="button"
-                onclick="navigator.clipboard.writeText('victor.lelikov@protonmail.com'); const t=this; t.textContent='Copied'; setTimeout(()=>t.textContent='Copy', 1200);">
-                Copy
-              </button>
+              <!-- LinkedIn -->
+              <a class="card" href="https://www.linkedin.com/in/victorlelikov/" target="_blank" rel="noreferrer">
+                <div class="kicker">
+                  <span class="icon" aria-hidden="true">
+                    <!-- LinkedIn icon -->
+                  </span>
+                  LinkedIn
+                </div>
+                <div class="title">Connect / message</div>
+                <div class="desc">Quick chat or networking? Find me here.</div>
+                <div class="actions">
+                  <span class="btn">Open</span>
+                </div>
+              </a>
+
+              <!-- GitHub -->
+              <a class="card" href="https://github.com/DrHahnchenflugel" target="_blank" rel="noreferrer">
+                <div class="kicker">
+                  <span class="icon" aria-hidden="true">
+                    <!-- GitHub icon -->
+                  </span>
+                  GitHub
+                </div>
+                <div class="title">Projects / code</div>
+                <div class="desc">The code for all my projects can be found here. Feel free to fork and use in your projects or learning!</div>
+                <div class="desc"><b>TMU Students:</b> Some of my lab work is uploaded here. Per Policy 60, you may NOT directly copy this code, you may only take inspiration.</div>
+                <div class="actions">
+                  <span class="btn">Open</span>
+                </div>
+              </a>
+
+              <!-- Resume -->
+              <a class="card" href="/assets/Victor_Lelikov_Resume.pdf">
+                <div class="kicker">
+                  <span class="icon" aria-hidden="true">
+                    <!-- File icon -->
+                  </span>
+                  Resume <span class="muted">(coming soon)</span>
+                </div>
+                <div class="title">PDF</div>
+                <div class="actions">
+                  <span class="btn">Download</span>
+                </div>
+              </a>
+
+              <!-- Availability -->
+              <div class="card">
+                <div class="kicker">
+                  <span class="icon" aria-hidden="true">
+                    <!-- Clock icon -->
+                  </span>
+                  <b>Availability</b>
+                </div>
+                <div class="title">Toronto (ET)</div>
+                <div class="desc">Usually reply within 24–72 hours.</div>
+              </div>
             </div>
           </div>
-
-          <!-- LinkedIn -->
-          <a class="card" href="https://www.linkedin.com/in/victorlelikov/" target="_blank" rel="noreferrer">
-            <div class="kicker">
-              <span class="icon" aria-hidden="true">
-                <!-- LinkedIn icon -->
-              </span>
-              LinkedIn
-            </div>
-            <div class="title">Connect / message</div>
-            <div class="desc">Quick chat or networking? Find me here.</div>
-            <div class="actions">
-              <span class="btn">Open</span>
-            </div>
-          </a>
-
-          <!-- GitHub -->
-          <a class="card" href="https://github.com/DrHahnchenflugel" target="_blank" rel="noreferrer">
-            <div class="kicker">
-              <span class="icon" aria-hidden="true">
-                <!-- GitHub icon -->
-              </span>
-              GitHub
-            </div>
-            <div class="title">Projects / code</div>
-            <div class="desc">The code for all my projects can be found here. Feel free to fork and use in your projects or learning!</div>
-            <div class="desc"><b>TMU Students:</b> Some of my lab work is uploaded here. Per Policy 60, you may NOT directly copy this code, you may only take inspiration.</div>
-            <div class="actions">
-              <span class="btn">Open</span>
-            </div>
-          </a>
-
-          <!-- Resume -->
-          <a class="card" href="/assets/Victor_Lelikov_Resume.pdf">
-            <div class="kicker">
-              <span class="icon" aria-hidden="true">
-                <!-- File icon -->
-              </span>
-              Resume <span class="muted">(coming soon)</span>
-            </div>
-            <div class="title">PDF</div>
-            <div class="actions">
-              <span class="btn">Download</span>
-            </div>
-          </a>
-
-          <!-- Availability -->
-          <div class="card">
-            <div class="kicker">
-              <span class="icon" aria-hidden="true">
-                <!-- Clock icon -->
-              </span>
-              Availability
-            </div>
-            <div class="title">Toronto (ET)</div>
-            <div class="desc">Usually reply within 24–72 hours.</div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
+    </main>
+    <div id="site-footer"></div>
 
     <script src="/assets/js/theme.js?v=dev3" defer></script>
     <script src="/assets/js/header.js?v=dev3" defer></script>
