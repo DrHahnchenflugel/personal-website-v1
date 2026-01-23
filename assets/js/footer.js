@@ -1,7 +1,9 @@
 (function () {
   const targetId = "site-footer";
   const headerPath = "/partials/footer.html";
+  const versionPath = "/assets/meta/version.json";
 
+  // Load and display site footer + version info
   const target = document.getElementById(targetId);
   if (!target) {
     console.warn("[footer.js] #site-footer not found");
@@ -17,6 +19,20 @@
     })
     .then(html => {
       target.innerHTML = html;
+
+      fetch(versionPath, { cache: "no-store" })
+        .then(r => r.ok ? r.json() : null)
+          .then(v => {
+            if (!v) return;
+            const el = target.querySelector("#site-version");
+            if (!el) return;
+
+            el.textContent = v.revision
+              ? `${v.version} (rev${v.revision})`
+              : v.version;
+      })
+      .catch(() => {});
+
       document.dispatchEvent(new Event('footer:loaded'));
       highlightActiveLink();
     })
