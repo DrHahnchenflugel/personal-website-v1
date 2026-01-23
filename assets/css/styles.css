@@ -1,61 +1,138 @@
-/* THEMES */
+/* assets/css/styles.css
+   Global base styles for all pages.
+*/
+
+/* ─────────────────────────────
+   Theme tokens
+   ───────────────────────────── */
 :root{
-  --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
-  --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
-  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
-  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
+  --bg:#0f1218;
+  --fg:#e8d9c3;
+  --muted:#cbd5e199;
+
+  --card:#121520;
+  --border:#2a2f3a;
+  --accent:#d7b46a;
+
+  --container: 900px;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --shadow: 0 2px 12px rgba(0,0,0,.25);
 }
+
 :root[data-theme="light"]{
-  --bg:#f6f6f7; --fg:#111318; --muted:#334155cc;
-  --card:#ffffff; --border:#e5e7eb; --accent:#7fa4d8;
-  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
-  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
+  --bg:#f6f6f7;
+  --fg:#111318;
+  --muted:#334155cc;
+
+  --card:#ffffff;
+  --border:#e5e7eb;
+  --accent:#7fa4d8;
+
+  --shadow: 0 2px 14px rgba(0,0,0,.08);
 }
+
 :root[data-theme="dark"]{
-  --bg:#0f1218; --fg:#e8d9c3; --muted:#cbd5e199;
-  --card:#121520; --border:#2a2f3a; --accent:#d7b46a;
-  --card-w: clamp(260px, 28vw, 420px);  /* width target ~28% of viewport */
-  --card-h: clamp(180px, 28vh, 320px);  /* height target ~28% of viewport */
+  /* same as :root; kept for clarity */
 }
 
-/* BASE */
-/* Smooth transition */
-html,body{
-    background: var(--bg);
-    color: var(--fg);
-    transition:background-color .25s, color .25s;
-    }
+/* ─────────────────────────────
+   Base / resets
+   ───────────────────────────── */
+*{ box-sizing: border-box; }
 
-*{box-sizing:border-box}
+html,body{
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color .25s, color .25s;
+}
 
 body{
-  margin:0; background:var(--bg); color:var(--fg);
-  font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+  margin: 0;
+  font: 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
 }
 
-a{color:var(--accent); text-decoration:none}
-a:hover{text-decoration:underline}
+img{ max-width: 100%; height: auto; display: block; }
 
-/* LAYOUT */
-.container{max-width:900px; margin:0 auto; padding:0 16px}
-header{border-bottom:2px solid var(--border); padding:12px 0}
-nav a{color:var(--muted); margin-left:12px}
-section{padding:24px 0}
+a{ color: var(--accent); text-decoration: none; }
+a:hover{ text-decoration: underline; }
 
-/* TYPE */
-h1{margin:24px 0 8px; font-size:28px; line-height:1.25}
-h2{margin:24px 0 8px; font-size:22px; line-height:1.25}
-.muted{color:var(--muted)}
-
-/* CONTENT */
-/* flex row for header */
-.row{display:flex;align-items:center;justify-content:space-between;}
-/* divider after the hero */
-section + section > .container{
-  border-top: var(--rule,2px) solid var(--border);
-  padding-top:24px;
+/* ─────────────────────────────
+   Layout primitives
+   ───────────────────────────── */
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 16px;
 }
-/* list info */
-ul{padding-left:1.1rem}
-li{margin:6px 0}
-li strong{margin-right:6px}
+
+section{
+  padding: 22px 0;
+}
+
+.row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Header/nav */
+header{
+  border-bottom: 2px solid var(--border);
+  padding: 12px 0;
+}
+
+nav{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+nav a{
+  color: var(--muted);
+  text-decoration: none;
+}
+nav a:hover{
+  color: var(--fg);
+  text-decoration: none;
+}
+
+/* ─────────────────────────────
+   Typography
+   ───────────────────────────── */
+h1,h2,h3{
+  margin: 0;
+  line-height: 1.25;
+}
+
+h1{
+  margin: 18px 0 10px;
+  font-size: 28px;
+}
+
+h2{
+  margin: 20px 0 10px;
+  font-size: 22px;
+}
+
+p{ margin: 10px 0; }
+
+.muted{ color: var(--muted); }
+
+/* Defaults for lists */
+ul{ margin: 10px 0; padding-left: 1.1rem; }
+li{ margin: 6px 0; }
+li strong{ margin-right: 6px; }
+
+/* divider between sections */
+.section-rule{
+  border-top: 2px solid var(--border);
+  padding-top: 18px;
+}
+
+/* center aligning utility class */
+.center{ text-align: center; }

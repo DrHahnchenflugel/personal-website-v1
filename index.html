@@ -8,6 +8,7 @@
         <title>Victor Lelikov</title>
 
         <link rel="stylesheet" href="assets/css/styles.css?v=dev2" />
+        <link rel="stylesheet" href="assets/css/pages/index.css?v=dev2" />
         <link rel="icon" href="/assets/img/favicons/favicon.ico">
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
@@ -59,105 +60,6 @@
             </section>
             <div id="site-footer"></div>
         </main>
-        <style>
-        /* ─────────────────────────────
-            Projects grid layout
-            ───────────────────────────── */
-        #projects .cards{
-            display:grid;
-            gap:16px;
-            grid-template-columns: 1fr;
-        }
-        @media (min-width:560px){
-            #projects .cards{ grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (min-width:900px){
-            #projects .cards{ grid-template-columns: repeat(3, 1fr); }
-        }
-
-        /* ─────────────────────────────
-            Card component (projects)
-            ───────────────────────────── */
-        #projects a.card{
-            position:relative;
-            display:flex;
-            flex-direction:column;
-            justify-content:flex-end;
-
-            aspect-ratio: 1 / 1;   /* square */
-            padding:14px;
-
-            border-radius:1rem;
-            overflow:hidden;
-            isolation:isolate;
-
-            background:var(--card);
-            color:#fff;
-            text-decoration:none;
-
-            box-shadow:0 2px 12px rgba(0,0,0,.25);
-            transition:transform .2s ease;
-        }
-        #projects a.card:hover{
-            transform:translateY(-2px);
-            text-decoration:none;
-        }
-
-        /* keep text above overlays */
-        #projects a.card > *{
-            position:relative;
-            z-index:1;
-        }
-
-        /* image (under) */
-        #projects a.card::before{
-            content:"";
-            position:absolute;
-            inset:0;
-            z-index:0;
-
-            background-image:var(--img, none);
-            background-size:cover;
-            background-position:center;
-
-            filter: blur(2px) brightness(.75) saturate(1);
-            transform: scale(1.08);
-            transition:filter .25s ease, transform .25s ease;
-        }
-
-        /* gradient (over) */
-        #projects a.card::after{
-            content:"";
-            position:absolute;
-            inset:0;
-            z-index:0;
-
-            background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
-            opacity:.95;
-            transition:opacity .25s ease;
-        }
-
-        #projects a.card:hover::before{
-            filter: blur(2px) brightness(.85) saturate(1.05);
-            transform: scale(1.12);
-        }
-        #projects a.card:hover::after{
-            opacity:1;
-        }
-
-        /* typography */
-        #projects a.card h3{
-            margin:0 0 4px 0;
-            font:800 20px/1.15 Georgia,"Times New Roman",serif;
-            color:inherit;
-        }
-        #projects a.card p{
-            margin:0;
-            font-size:13px;
-            opacity:.92;
-            color:inherit;
-        }
-        </style>
         <script src="/assets/js/theme.js?v=dev3" defer></script>
         <script src="/assets/js/header.js?v=dev3" defer></script>
         <script src="/assets/js/footer.js?v=dev3" defer></script>
