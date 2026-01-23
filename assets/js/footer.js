@@ -1,6 +1,6 @@
 (function () {
   const targetId = "site-footer";
-  const headerPath = "/partials/footer.html";
+  const footerPath = "/partials/footer.html";
   const versionPath = "/assets/meta/version.json";
 
   // Load and display site footer + version info
@@ -10,7 +10,7 @@
     return;
   }
 
-  fetch(headerPath)
+  fetch(footerPath)
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to load footer (${response.status})');
