@@ -20,13 +20,15 @@
             <section>
                 <div class="container">
                     <h1>Hey There, I'm Victor.</h1>
-                    <p class="muted"> I'm a third-year comp-eng student <b>@ TMU</b> with a focus on hardware, 
-                        and I work across IT, operations, development, and on internal tools <b>@ Exceed Robotics.</b></p>
-                    <p class="muted">Outside of coursework and Exceed, I'm usually working on personal projects on my home server,
+                    <p> I'm a third-year comp-eng student <b>@ TMU</b> with a focus on hardware. 
+                        I also work across IT, operations, development, and on internal tools <b>@ Exceed Robotics.</b></p>
+                    
+                    <p>Outside of school and work, I'm usually working on personal projects, on my home server,
                         helping coach our <b>VEX VRC</b> teams, doing laps around the <b>Nordschleife</b> in Assetto Corsa, or reading
-                        outside my field - lately, John Stuart Mill.
+                        outside my field - lately, that's been on academic freedom and John Stuart Mill.
                     </p>
-                    <p class="muted">This site is mostly a place to document what I'm building and what I've learned along the way. You can find 
+
+                    <p>This site is mostly a place to document what I'm building and what I've learned along the way. You can find 
                         my projects below, or reach me via the contact page!
                     </p>
                 </div>
@@ -58,82 +60,103 @@
             <div id="site-footer"></div>
         </main>
         <style>
-            /* PROJECT CARDS — make <a> behave like cards - TAILWIND SO MUST BE HERE */
-            .cards{ display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+        /* ─────────────────────────────
+            Projects grid layout
+            ───────────────────────────── */
+        #projects .cards{
+            display:grid;
+            gap:16px;
+            grid-template-columns: 1fr;
+        }
+        @media (min-width:560px){
+            #projects .cards{ grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width:900px){
+            #projects .cards{ grid-template-columns: repeat(3, 1fr); }
+        }
 
-            a.card{
-              display:block;                 /* key */
-              position:relative;
-              height:220px;                  /* simple, visible size; or use aspect-ratio:1/1 */
-              border-radius:1rem; overflow:hidden; isolation:isolate;
-              padding:14px; background:var(--card);
-              color:#fff; text-decoration:none;
-              box-shadow:0 2px 12px rgba(0,0,0,.25);
-              transition:transform .2s ease;
-            }
-            a.card:hover{ transform:translateY(-2px); text-decoration:none; } /* kill underline */
+        /* ─────────────────────────────
+            Card component (projects)
+            ───────────────────────────── */
+        #projects a.card{
+            position:relative;
+            display:flex;
+            flex-direction:column;
+            justify-content:flex-end;
 
-            /* keep text above overlays */
-            a.card > *{ position:relative; z-index:1; }
+            aspect-ratio: 1 / 1;   /* square */
+            padding:14px;
 
-            /* image (under) */
-            a.card::before{
-              content:""; position:absolute; inset:0; z-index:0;
-              background-image:var(--img, none);
-              background-size:cover; background-position:center;
-              filter:blur(3px) brightness(.55) saturate(.9);
-              transform:scale(1.08);
-              transition:filter .25s ease, transform .25s ease;
-            }
-            /* gradient (over) */
-            a.card::after{
-              content:""; position:absolute; inset:0; z-index:0;
-              background:linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 100%);
-              opacity:.9; transition:opacity .25s ease;
-            }
-            a.card:hover::before{ filter:blur(3px) brightness(.75) saturate(1); transform:scale(1.12); }
-            a.card:hover::after{ opacity:1; }
+            border-radius:1rem;
+            overflow:hidden;
+            isolation:isolate;
 
-            /* title/body */
-            a.card h3{ margin:0 0 4px 0; font:800 20px/1.15 Georgia,"Times New Roman",serif; color:inherit; }
-            a.card p { margin:0; font-size:13px; opacity:.92; color:inherit; }
+            background:var(--card);
+            color:#fff;
+            text-decoration:none;
 
-            #projects .cards{
-              display:grid; gap:16px;
-              grid-template-columns: 1fr;
-            }
-            @media (min-width:560px){
-              #projects .cards{ grid-template-columns: repeat(2, 1fr); }
-            }
-            @media (min-width:900px){
-              #projects .cards{ grid-template-columns: repeat(3, 1fr); }
-            }
+            box-shadow:0 2px 12px rgba(0,0,0,.25);
+            transition:transform .2s ease;
+        }
+        #projects a.card:hover{
+            transform:translateY(-2px);
+            text-decoration:none;
+        }
 
-            /* Square cards with content pinned to bottom */
-            #projects a.card{
-              display:flex; flex-direction:column; justify-content:flex-end;
-              aspect-ratio: 1 / 1;        /* ← makes perfect squares */
-              height:auto;                /* remove fixed height */
-              border-radius:1rem; overflow:hidden; isolation:isolate;
-              padding:14px; background:var(--card);
-              color:#fff; text-decoration:none;
-              box-shadow:0 2px 12px rgba(0,0,0,.25);
-              transition:transform .2s ease;
-            }
+        /* keep text above overlays */
+        #projects a.card > *{
+            position:relative;
+            z-index:1;
+        }
 
-            /* Tweak overlays so the image is visible */
-            #projects a.card::before{
-              content:""; position:absolute; inset:0; z-index:0;
-              background-image:var(--img, none);
-              background-size:cover; background-position:center;
-              filter: blur(2px) brightness(.75) saturate(1);
-              transform: scale(1.08);
-            }
-            #projects a.card::after{
-              content:""; position:absolute; inset:0; z-index:0;
-              background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
-              opacity: .95;
-            }
+        /* image (under) */
+        #projects a.card::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            z-index:0;
+
+            background-image:var(--img, none);
+            background-size:cover;
+            background-position:center;
+
+            filter: blur(2px) brightness(.75) saturate(1);
+            transform: scale(1.08);
+            transition:filter .25s ease, transform .25s ease;
+        }
+
+        /* gradient (over) */
+        #projects a.card::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            z-index:0;
+
+            background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
+            opacity:.95;
+            transition:opacity .25s ease;
+        }
+
+        #projects a.card:hover::before{
+            filter: blur(2px) brightness(.85) saturate(1.05);
+            transform: scale(1.12);
+        }
+        #projects a.card:hover::after{
+            opacity:1;
+        }
+
+        /* typography */
+        #projects a.card h3{
+            margin:0 0 4px 0;
+            font:800 20px/1.15 Georgia,"Times New Roman",serif;
+            color:inherit;
+        }
+        #projects a.card p{
+            margin:0;
+            font-size:13px;
+            opacity:.92;
+            color:inherit;
+        }
         </style>
         <script src="/assets/js/theme.js?v=dev3" defer></script>
         <script src="/assets/js/header.js?v=dev3" defer></script>
