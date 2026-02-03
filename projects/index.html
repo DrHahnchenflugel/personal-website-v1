@@ -1,32 +1,71 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Victor Lelikov</title>
-        <link rel="stylesheet" href="../assets/css/styles.css">
-        <!-- Tailwind -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/assets/img/favicons/favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    </head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projects - Victor Lelikov</title>
+<link rel="stylesheet" href="../assets/css/styles.css">
+<link rel="stylesheet" href="../assets/css/projects/projects.css">
+<link rel="stylesheet" href="../assets/css/projects/list.css">
+<link rel="icon" href="/assets/img/favicons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
 
-    <body>
-        <div id="site-header"></div>
-        <main>
-            <!-- Hero -->
-            <section class="py-14">
-                <div class="mx-auto max-w-6xl px-4 items-center">
-                    <h1 class="text-4xl md:text-5xl font-semibold leading-tight">
-                        PROJECTS
-                    </h1>
-                </div>
-            </section>
-        </main>
-        <script src="/assets/js/theme.js?v=dev3" defer></script>
-        <script src="/assets/js/header.js?v=dev3" defer></script>
-        <script src="/assets/js/footer.js?v=dev3" defer></script>
-    </body>
+<body>
+<div id="site-header"></div>
+<main>
+    <!-- Hero -->
+    <section class="project-list-hero">
+    <div class="container">
+        <div class="project-crumbs muted">Projects</div>
+        <h1 class="project-title">Projects</h1>
+        <p class="project-sub muted">
+        A collection of things I am working on now, plus past projects worth documenting.
+        </p>
+    </div>
+    </section>
+
+    <section class="project-list">
+    <div class="container">
+        <div class="cards">
+        <a class="card" href="/projects/maintenance_app/" style="--img: url('/assets/img/projects/cmms/CMMS_IssuePage.png')">
+            <h3>Maintenance App</h3>
+            <p>Simple CMMS for tracking issues, assets, and maintenance activity across sites.</p>
+            <div class="card-tags">
+            <span class="pill">Flask</span>
+            <span class="pill">PostgreSQL</span>
+            <span class="pill">HTML/CSS</span>
+            <span class="pill">Self-hosted</span>
+            </div>
+        </a>
+
+        <a class="card" href="/projects/homelab/" style="--img: url('/assets/img/projects/homelab/homelab_2.jpg')">
+            <h3>Self-Hosted Infrastructure</h3>
+            <p>Personal server stack for reliable deployments, backups, and controlled upgrades.</p>
+            <div class="card-tags">
+            <span class="pill">Proxmox</span>
+            <span class="pill">Docker</span>
+            <span class="pill">Linux</span>
+            <span class="pill">Cloudflare</span>
+            </div>
+        </a>
+
+        <a class="card" href="/projects/fpga-doohickey/" style="--img: url('/assets/img/projects/fpga_doohickey/CycloneIV_FPGA_Board.jpeg')">
+            <h3>FPGA Doohickey</h3>
+            <p>Cyclone IV FPGA toy with I2C OLED output and reactive LED patterns.</p>
+            <div class="card-tags">
+            <span class="pill">FPGA</span>
+            <span class="pill">SystemVerilog</span>
+            <span class="pill">I2C</span>
+            <span class="pill">Hardware</span>
+            </div>
+        </a>
+        </div>
+    </div>
+    </section>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/js/theme.js?v=dev3" defer></script>
+<script src="/assets/js/header.js?v=dev3" defer></script>
+<script src="/assets/js/footer.js?v=dev3" defer></script>
+</body>
 </html>
