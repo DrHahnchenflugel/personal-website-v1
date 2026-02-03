@@ -21,7 +21,7 @@
 .project-meta{
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 10px;url(.) url(projects.css)
   margin: 12px 0 8px;
 }
 

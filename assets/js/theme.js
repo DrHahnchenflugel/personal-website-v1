@@ -15,7 +15,7 @@
   }
 
   function getCurrentTheme() {
-    return root.getAttribute('data-theme') || 'dark';
+    return root.getAttribute('data-theme') || 'light';
   }
 
   function updateToggleText(theme) {
