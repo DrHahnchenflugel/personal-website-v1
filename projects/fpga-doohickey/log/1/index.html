@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 1 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <link rel="stylesheet" href="../../assets/css/projects/projects.css" />
+    <link rel="stylesheet" href="../../assets/css/projects/logs.css" />
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 1 - Project Conception & Ordering Parts</h1>
+          <p class="project-sub muted">
+            Initial commit - project conception and parts ordering process.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">Project Setup</span>
+            <span class="pill">Ordering Parts</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">January 10, 2026</p>
+                <h2 class="log-title">Log 1 - Project Conception & Ordering Parts</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                I've always wanted to make a fun little hardware toy that has a bunch of lights, 
+                buttons, and maybe a small screen for kids to play with while waiting for class at Exceed Robotics. 
+                "Doohickey" is very much the best way to describe such a device.
+                <br>
+                The other day, I was browsing AliExpress, as one does, and stumbled upon a bunch of 
+                <a href="https://www.aliexpress.com/item/1005007724924065.html">LED-enabled buttons</a>, 
+                which looked a lot like the buttons in the Death Star control room. So I felt inspired and remembered about the LED+button thingie I wanted to make
+                - why not finally get around to it? Since I already had some FPGA experience from school, I thought now would be a great time to do a project 
+                unrelated to my school work. I also wanted to get some experience in SystemVerilog, as it's more modern than VHDL, which is TMU's primary FPGA language.
+                <br>
+                So, i started looking for Quartus-based FPGA dev boards (as I was most used to Altera's tools), and found a few options on AliExpress.
+                My requirements were as follows:
+                <ul>
+                    <li>Quartus-based FPGA board</li>
+                    <li>Small</li>
+                    <li>Enough I/O for the LEDs, buttons, and </li>
+                    <li>I/O compatible an OLED board</li>
+                    <li>JTAG connector for uploading code</li>
+                </ul>
+                After some time, I found a <a href="https://www.aliexpress.com/item/1005010338389897.html">cheap AliExpress board</a> based on the 
+                Altera Cyclone IV EP4CE6E22C8N FPGA, which had enough proper I/O pins and a JTAG connector. A few buttons and potentiometers later, and I had my parts list.
+                <br>
+                I also wanted to get an OLED display for some extra experience, which came with its own challenges: the FPGA board had logic levels of 3V3, 2V5 and 1V8, whereas
+                most OLED modules I could find were based on a 5V level. After about 20 minutes of searching, I found a 3V3 OLED module on Amazon, which was also the last available
+                one from the seller. Not believing my luck, I quickly ordered it, along with the rest of the parts.
+                <br>
+                Now, we wait for the parts to arrive...
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>

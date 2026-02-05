@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 1 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="../../assets/css/styles.css" />
+    <link rel="stylesheet" href="../../assets/css/projects/projects.css" />
+    <link rel="stylesheet" href="../../assets/css/projects/logs.css" />
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 2 - Quartus Struggles</h1>
+          <p class="project-sub muted">
+            Installing Quartus 15.1 on my Manjaro system
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">Software Setup</span>
+            <span class="pill">Quartus 15.1</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 2, 2026</p>
+                <h2 class="log-title">Log 2 - Quartus Struggles</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                The parts arrived! Time to test them...
+                <br>
+                I already had Quartus II 13.0 sp1 installed using Wine on my system, but it seemed to not detect my JTAG programmer module.
+                After some research, I found out that the Wine install seemed to not be able to speak with my JTAG module, so I decided to install 
+                the native Linux version. I settled on an upgrade up to Quartus 15.1, as it seemed to have better Linux support and support for both 
+                the JTAG module v1 and v2, if needed. Basically, it was the Minecraft 1.7.10 of Quartus versions.
+                <br>
+                I first thought of keeping the Wine version, but the jtag daemon, which uses port 1309, could only run on one instance at a time, and the Wine version
+                kept taking over the port whenever I ran the Wine version. So, I uninstalled the Wine version and started to install the native Linux version.
+                <br>
+                <ul>
+                    <li>Quartus Prime Web Edition <a href="https://www.altera.com/downloads/fpga-development-tools/quartus-ii-web-edition-design-software-version-15-0-b145-linux">[Link]</a></li>
+                    <li>Quartus Prime Lite (Offline Install) Edition <a href="https://www.altera.com/downloads/fpga-development-tools/quartus-prime-lite-edition-design-software-version-15-1-b185-linux">[Link]</a></li>
+                </ul>
+                I started by trying to install the <i>web edition</i> of Quartus 15.1 (see above), but the installer kept crashing around ~95% with a segmentation fault. 
+                My first instinct was to look for an offline installer, which I found on the same website (see above). From the site, I went to the <i>individual files</i> section
+                and downloaded the QuartusLiteSetup-15.1.0.185-linux.run file, alongside the files for the Cyclone IV device support <i>(cyclone-15.1.0.185.qdz)</i>. Following the website instructions,
+                I placed the downloaded .run file in a temporary folder with the .qdz file, and made the files executable using 
+                <br>
+                <code>chmod +x *.run</code>.
+                <br>
+                Then, I ran the installer using
+                <br>
+                <code>sudo ./QuartusLiteSetup-15.1.0.185-linux.run</code>
+                <br>
+                and followed the installation instructions. It did bring up licensing, but that window is more of a suggestion than anything - just press "ok" 2 times and move on.
+                All installed! Let's test the JTAG programmer...
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+.log-list{
+  display: grid;
+  gap: 16px;
+}
+
+.log-entry__header{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.log-title{
+  margin: 0;
+  font-size: 20px;
+}
+
+.log-date{
+  margin: 0 0 4px;
+  font-size: 13px;
+  letter-spacing: .02em;
+}
+
+.log-entry ul{
+  margin-bottom: 0;
+}
