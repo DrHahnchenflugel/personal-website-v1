@@ -66,6 +66,7 @@
                 <br>
                 <code>lsusb | grep -i altera</code>
                 <br>
+                <br>
                 This returned a line with the device ID <code>09fb:6001</code>, which seemed to indicate that the device was at least detected by the system.
                 I then went to check the permissions of the device node:
                 <br>
@@ -118,6 +119,7 @@
                 <br>
                 That gives me:
                 <br>
+                <br>
                 <code>
                 jtagd
                 <br>
@@ -142,6 +144,7 @@
                 <br>
                 <br>
                 Returning:
+                <br>
                 <br>
                 <code>No JTAG hardware available.</code>
                 <br>
@@ -168,7 +171,7 @@
                 </code>
                 <br>
                 <br>
-                Result? No. JTAG. hardware. available. End my suffering. Let's see the debug mode on jtagconfig:
+                Result? <strong>No. JTAG. hardware. available.</strong> End my suffering. Let's see the debug mode on jtagconfig:
                 <br>
                 <br>
                 <code>
@@ -209,7 +212,7 @@
                 </code>
                 <br>
                 <br>
-                Finally. Let's open up the Quartus Programmer GUI again, and check Hardware Setup. This time, the USB-Blaster showed up. However,
+                Finally!!! Let's open up the Quartus Programmer GUI again, and check Hardware Setup. This time, the USB-Blaster showed up. However,
                 when I went to auto-detect hardware, I got an empty list. Back to the CLI we go:
                 <br>
                 <br>
@@ -243,16 +246,28 @@
                 <img src="/assets/img/projects/fpga_doohickey/new_firmware.png">
                 <br>
                 <br>
-                "...but to make it work with CycloneIV EP4CE6E22C8N, <strong>you need to flash it with new firmware.</strong>" Ah.
-                Of course, since this wasn't a true CPLD-based USB-Blaster, but a CH552G-based clone, and a cheaply-made one at that, any minor difference in (I can only assume)
-                the timing would cascade into an inability to detect devices on the JTAG chain. Luckily, there were a few options, both closed- and open-source to flash.
+                "...but to make it work with CycloneIV EP4CE6E22C8N, <strong>you need to flash it with new firmware.</strong>" 
+                <br>
+                <br>
+                Ah.
+                <br>
+                <br>
+                Of course.
+                <br>
+                <br>
+                Since this wasn't a true CPLD-based USB-Blaster, but a CH552G-based clone, and a cheaply-made one at that, any minor difference in (I can only assume)
+                the timing would cascade into an inability to detect devices on the JTAG chain. 
+                <br>
+                Luckily, there were a few options, both closed- and open-source to flash.
                 And instructions, courtesy of <a href="https://elerain.com/reflating-the-firmware-of-low-cost-chinese-usb-blaster-equivalent-clone/">elerain.com</a> 
                 (which was based off <a href="https://www.downtowndougbrown.com/2024/06/fixing-a-knockoff-altera-usb-blaster-that-never-worked/">Doug Brown's work</a> 
                 (which was based off <a href="https://github.com/VladimirDuan/CH55x-USB-Blaster">Vladimir Duan's unfixed CH55x sources</a> (you can see how fun the 
                 open-source community is - at least everyone gives credit!)))
+                <br>
+                <br>
                 Anyway, turns out that there was only a chance that this CH552G clone would work, and to do so, I had to (find! and) solder a, say, 10k resistor between D+ and 3v3.
-                I looked at the pins on the board, and saw that the pins were thinner than the resistor legs themselves. I then looked at Doug's site, who seemed to be lucky enough to
-                buy a board with test points.
+                I looked at the pins on the board, and saw that the pins were thinner than the resistor legs themselves. I then looked at Doug's site, who seemed to be smart enough to
+                buy a board with test points (Remember kids! Always buy cheap Chinese electronics <strong>with</strong> test points!).
                 <br>
                 <br>
                 At this point, I had a few options: I could suffer through trying to solder the resistor legs to the tiny pins, with only a hope that this might work. I could buy
