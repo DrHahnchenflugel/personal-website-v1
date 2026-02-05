@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FPGA Doohicky - Victor Lelikov</title>
+    <title>FPGA Doohickey - Victor Lelikov</title>
 
     <!-- paint viewport to avoid white flash -->
     <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
 
     <link rel="stylesheet" href="../../assets/css/styles.css?v=dev2" />
     <link rel="stylesheet" href="../../assets/css/projects/projects.css?v=dev2" />
-        <link rel="icon" href="/assets/img/favicons/favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
 
   <body>
@@ -23,94 +23,99 @@
       <!-- Hero -->
       <section class="project-hero">
         <div class="container">
-          <div class="project-crumbs muted">Projects / FPGA Doohickey</div>
-          <h1 class="project-title">FPGA Doohickey</h1>
+          <div class="project-crumbs muted">Projects / Project Template</div>
+          <h1 class="project-title">Project Template</h1>
           <p class="project-sub muted">
-            A Cyclone IV FPGA-powered interactive hardware toy using buttons and potentiometers as inputs
-              and an I2C OLED screen & LEDS as outputs, coded in SystemVerilog.
+            A Cyclone IV FPGA-powered interactive hardware toy using buttons and potentiometers as inputs, 
+            and an I2C OLED screen & LEDs as outputs, coded in SystemVerilog. <b>This project is still a work in progress.</b>
           </p>
-
           <div class="project-meta">
-            <span class="pill">FPGA</span>
+            <span class="pill">Cyclone IV FPGA</span>
             <span class="pill">SystemVerilog</span>
             <span class="pill">I2C</span>
             <span class="pill">Digital Design</span>
-            <span class="pill">Signal Generation</span>
           </div>
 
           <div class="project-actions">
-            <a class="btn" href="/projects/">← Back to Projects</a>
-            <a class="btn btn-primary" href="#" target="_blank" rel="noopener">GitHub [Not Created Yet]</a>
+            <a class="btn" href="/projects/">< Back to Projects</a>
+            <a class="btn btn-primary" href="https://github.com/DrHahnchenflugel/FPGA-doohickey" target="_blank" rel="noopener">GitHub</a>
           </div>
         </div>
       </section>
 
-      <!-- What -->
+      <!-- What it is -->
       <section>
-          <div class="container">
-            <h2>What is this?</h2>
+        <div class="container">
+          <h2>What it is</h2>
+          <p>
+            I always wanted to make a fun little hardware toy using an FPGA, so I designed this interactive doohickey that uses buttons and potentiometers as inputs, and an I2C OLED screen & LEDs as outputs. Coded in SystemVerilog, this project showcases my skills in digital design and embedded programming while providing an engaging experience intended for the kids at Exceed Robotics to play with while waiting for class.
+          </p>
+        </div>
+      </section>
 
-            <p>
-              This is a self-contained FPGA toy built to be played with.
-            </p>
-
-            <p>
-              Physical inputs: buttons, switches, knobs, and sliders. They drive visible outputs:
-                an OLED displaying a live waveform and a set of LEDs running reactive patterns.
-                There's no software UI, no microcontroller, and no abstraction layer.
-            </p>
-          </div>
-        </section>
-
-
-      <!-- Why -->
+      <!-- Basic tech stack -->
       <section>
-          <div class="container">
-            <h2>Why build it?</h2>
+        <div class="container">
+          <h2>Basic tech stack</h2>
+          <ul>
+            <li><a href="https://www.aliexpress.com/item/1005010338389897.html">Altera CycloneIV EP4CE6E22C8N Dev Board</a></li>
+            <li><s>CH552G-based USB-Blaster I Clone</s> <a href="">(Removed, click here for more info)</a></li>
+            <li><a href="https://web.archive.org/web/20260205042355/https://www.ebay.com/itm/261119115129">CPLD-based Altera USB Blaster II</a></li>
+            <li><a href="https://www.altera.com/downloads/fpga-development-tools/quartus-prime-standard-edition-design-software-version-15-1-b185-linux">Coded using SystemVerilog on Intel Quartus Prime Lite 15.1 SW</a></li>
+            <li><a href="https://www.amazon.ca/dp/B0BKH1CND6?ref=ppx_yo2ov_dt_b_fed_asin_title">0.96 inch I2C OLED Display Module 128X64 SSD1306 Driver Chip</a></li>
+            <li>Various <a href="https://www.aliexpress.com/item/1005007724924065.html">buttons</a>, potentiometers, LEDs, resistors, and so on...</li>
+            <li>Case designed in <a href="https://onshape.com">OnShape</a></li>
+          </ul>
+        </div>
+      </section>
 
-            <p>
-              I want a physical FPGA project that wasn't just a lab assignment, or a project
-              built purely for a resume. The goal is simple:
-            </p>
+      <!-- Photos -->
+      <section>
+        <div class="container">
+          <h2>Photos</h2>
+          <div class="shots">
+            <figure class="shot">
+              <img src="assets/img/projects/fpga_doohickey/Superlaser_firing_station.webp" alt="Inspiration Photo" loading="lazy" />
+              <figcaption class="muted">Inspiration: Star Wars Superlaser Firing Station (Img courtesy of starwars.fandom.com)</figcaption>
+            </figure>
 
-            <ul>
-              <li>Build an FPGA-based system with a real use</li>
-              <li>Make something fun, such that kids would actually want to play with (while waiting for class)</li>
-            </ul>
-
-            <div class="callout">
-              <p>
-                For younger students, it's immediately engaging: Lights animate on their
-                own, patterns shift, and every control produces an obvious response.
-              </p>
-
-              <p>
-                For older students, it's more education-centered. Controls
-                map directly to real concepts, like amplitude, frequency, signal inversion,
-                function selection, and pattern generation. That and the cool shiny lights. Everyone loves lights.
-              </p>
-            </div>
+            <figure class="shot">
+              <img src="assets/img/projects/fpga_doohickey/CycloneIV_Dev_Board.avif" alt="Cyclone IV FPGA Dev Board" loading="lazy" />
+              <figcaption class="muted">Cyclone IV EP4CE6E22 FPGA Dev Board I use for this project</figcaption>
+            </figure>
           </div>
-        </section>
+        </div>
+      </section>
 
+      <!-- What it does -->
+      <section>
+        <div class="container">
+          <h2>About This Project</h2>
+          <ul>
+            <li><strong>Toy made for older and younger students:</strong> Younger students like the blinking lights and simple interactions, while older students can learn something about functions and their behaviour under different conditions.</li>
+            <li><strong>Reacts to user input:</strong> Responds immediately to user input, pseudo-randomly blinking lights and updating the OLED display.</li>
+            <li><strong>Cool project to showcase</strong> hardware design and embedded programming concepts in a fun, interactive form with a purpose.</li>
+          </ul>
+        </div>
+      </section>
 
-      <!-- Logs -->
-        <section>
-          <div class="container">
-            <h2>Project Logs</h2>
-            <p class="muted">
-              Build notes, design decisions, and progress updates as the project evolves.
-            </p>
-            <ul class="project-logs">
-              <li><a href="/projects/fpga-doohickey/log/1/">Log 1: Project Kickoff</a> - Initial project planning and hardware selection.</li>
-              <li><a href="/projects/fpga-doohickey/log/2/">Log 2: Work In Progress</a> - Waiting for part arrival.</li>
-            </ul>
-          </div>
-        </section>
-
-
-      <div id="site-footer"></div>
+      <!-- Project logs -->
+      <section>
+        <div class="container">
+          <h2>Project logs</h2>
+          <p class="muted">
+            Build notes, design decisions, and progress updates.
+          </p>
+          <ul class="project-logs">
+            <li><a href="/projects/fpga-doohickey/log/1/index.html">Log 1: Project Conception & Ordering Parts</a> - Initial Commit</li>
+            <li><a href="/projects/fpga-doohickey/log/2/index.html">Log 2: Quartus Struggles</a> - Installing Quartus 15.1 on my Manjaro</li>
+            <li><a href="/projects/fpga-doohickey/log/3/index.html">Log 3: "LOL Nope" -JTAG Programmer</a> - I learn the downside of buying cheap knockoffs off AliExpress.</li>
+          </ul>
+        </div>
+      </section>
     </main>
+
+    <div id="site-footer"></div>
     <script src="/assets/js/theme.js?v=dev3" defer></script>
     <script src="/assets/js/header.js?v=dev3" defer></script>
     <script src="/assets/js/footer.js?v=dev3" defer></script>
