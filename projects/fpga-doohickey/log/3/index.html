@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 2 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css" />
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 3 - "LOL Nope" -JTAG Programmer</h1>
+          <p class="project-sub muted">
+            I try to make my JTAG programmer work with my board, while learning the downside of buying cheap knockoffs off AliExpress.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">Hardware Setup</span>
+            <span class="pill">JTAG Programmer (Altera USB-Blaster I)</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 3, 2026</p>
+                <h2 class="log-title">Log 3 - "LOL Nope" -JTAG Programmer</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                Okay I'll admit - I didn't expect this to work in the first place, just hoped for the best. The AliExpress reviews seemed to indicate that the programmer worked, 
+                so, really, how hard could it be to set up? 6 hours of troubleshooting later, here we are. Here's how it went down:
+                <br>
+                <br>
+                After installing Quartus 15.1* natively on my Manjaro system, I connected the JTAG programmer to my computer, and the board to the programmer. 
+                From there, I opened up Quartus, and went straight to <i>Tools > Programmer</i>.
+                <br>
+                <img src="assets/img/projects/fpga_doohickey/Programmer.png">
+                <br>
+                Upon clicking Hardware Setup, i was greeted with an empty list. Amazing!
+                I started by checking if the system detected the device at all:
+                <br>
+                <code>lsusb | grep -i altera</code>
+                <br>
+                This returned a line with the device ID <code>09fb:6001</code>, which seemed to indicate that the device was at least detected by the system.
+                I then went to check the permissions of the device node:
+                <br>
+                <code>ls -l /dev/bus/usb/*/*</code>
+                <br>
+                Looking for my device's port and bus numbers from the previous command's output. I saw the device was owned by root, and per my research, Quartus
+                could not access USB devices not owned by the current user. So, I created a udev rule file:
+                <br>
+                <code>sudo nano /etc/udev/rules.d/51-usbblaster.rules</code>
+                <br>
+                Into which I added:
+                <br>
+                <code>SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", MODE="0660", GROUP="uucp"</code>
+                <br>
+                After saving the file, I made sure I was in the uucp group and reloaded the udev rules using:
+                <br>
+                <code>sudo usermod -aG uucp $USER</code>
+                <code>sudo udevadm control --reload-rules && sudo udevadm trigger</code>
+                <br>
+                Then, as any good IT guy would do, I unplugged and replugged the blaster. Still not seeing anything on the GUI, I tried the CLI approach:
+                <br>
+                <code>/opt/altera_lite/15.1/quartus/bin/jtagd</code>
+                in one terminal, and in another:
+                <br>
+                <code>/opt/altera_lite/15.1/quartus/bin/quartus_pgm -l</code>
+                <br>
+                <br>
+                Weirdly though, the jtagd refused to daemonise. It just started and immediately stopped. "Correct me if I'm wrong," I thought, "but that's not how daemons work..."
+                So let's go investigate the alleged daemon. First, we check if it's already running, thus killing my attempts to start a second instance:
+                <br>
+                <code>psgrep -a jtagd</code>
+                <code>ps aux | grep -i jtagd | grep -v grep</code>
+                Nothing shows up. No running daemons. Next, I try to run it with the --help flag to see if there's anything I'm missing:
+                <br>
+                <code>sudo /opt/altera_lite/15.1/quartus/bin/jtagd --help</code>
+                That gives me:
+                <code>
+                jtagd
+                <br>
+                Version 25.1std.0 Build 1129 10/21/2025 SC Standard Edition
+                <br>
+                Copyright (C) 2025 Altera Corporation. All rights reserved.
+                <br>
+                Usage: jtagd [--user-start] [--config <\filename>] [--version] [--help | --extrahelp]
+                <br>
+                <br>
+                You should not need to run this command. Please use the jtagconfig command to control the JTAG Server.
+                <br>
+                ...
+                </code>
+                Ah. <strong>You should not need to run this command. Please use the jtagconfig command to control the JTAG Server.</strong>. 
+                Let's try jtagconfig, then:
+                <br>
+                <code>/opt/altera_lite/15.1/quartus/bin/jtagconfig</code>
+                <br>
+                Returning:
+                <br>
+                <code>No JTAG hardware available.</code>
+                <br>
+                Huh. So we know the device is there and readable by the system, but the Quartus JTAG tools refuse to claim it.
+                After some more digging, it turns out that Quartus has an env script that I need to run to set up variables and the like. I tried running it in my
+                zsh terminal, but that would immediately crash it. Crap. So, I tried running it in a bash terminal, which complained about not being able to find the
+                QUARTUS_ROOTDIR env variable. Here's the code that finally got that fixed.
+                <br>
+                <code>bash -lc '
+                        export QUARTUS_ROOTDIR=/opt/altera_lite/15.1/quartus
+                        source /opt/altera_lite/15.1/quartus/adm/qenv.sh
+                        /opt/altera_lite/15.1/quartus/bin/jtagconfig'
+                </code>
+                <br>
+                Well, at least it doesn't crash now. Let's add the env vars to my ~/.zshrc so I don't have to do this every time:
+                <br>
+                <code>
+                    export QUARTUS_ROOTDIR=/opt/altera_lite/15.1/quartus
+                    export PATH=$QUARTUS_ROOTDIR/bin:$PATH
+                </code>
+                <br>
+                Result? No. JTAG. hardware. available. End my suffering. Let's see the debug mode on jtagconfig:
+                <br>
+                <code>
+                    sudo /opt/altera_lite/15.1/quartus/bin/jtagconfig --debug
+                </code>
+                <br>
+                The result? Just over 3000 words worth of debug output. Skimming through it, I found something interesting. jtagd wasn't a daemon. It was just a 
+                wrapper script that spawns shell commands and loads stuff: off we go to investigate the jtagd script. I installed strace 
+                to see what was going on, and finally found the culprit: jtagd kept exiting because it couldn't bind to the localhost 1309 port. 
+                Why?? I had already taken care of anything that might be using port 1309?? 
+                <br>
+                <code>
+                    grep aux | grep -E 'jtagd|1309' | grep -v grep
+                </code>
+                <code>
+                    LISTEN 0 0 0.0.0.0:1309 0.0.0.0:* users:(("wineserver", pid=...))
+                    ...
+                </code>
+                <br>
+                "LOL, Nope." Turns out, I didn't uninstall Wine Quartus properly, and it was still running a jtag server. 
+                After killing all Wine processes and uninstalling the Wine Quartus properly, I restarted my computer to be sure, and tried again.
+                Let's try that again:
+                <br>
+                <code>
+                    sudo /opt/altera_lite/15.1/quartus/bin/jtagd --user-start
+                    /opt/altera_lite/15.1/quartus/bin/jtagconfig
+                </code>
+                <code>
+                    1) USB-Blaster [13-4.2]
+                </code>
+                <br>
+                Finally. Let's open up the Quartus Programmer GUI again, and check Hardware Setup. This time, the USB-Blaster showed up. However,
+                when I went to auto-detect hardware, I got an empty list. Back to the CLI we go:
+                <br>
+                <code>
+                    /opt/altera_lite/15.1/quartus/bin/jtagconfig -c 1 -n                   
+                </code>
+                <code>
+                    Error when scanning hardware - No devices                   
+                </code>
+                <br>
+                Looks like our device chain is empty. Here are the next couple hours of troubleshooting boiled down to a few lines.
+                <br>
+                <strong>Let's go gambling!</strong>
+                <ul>
+                    <li>Check that the FPGA and Blaster are both powered <i>(Aw, dang it.)</i></li>
+                    <li>Check that the cable is seater properly <i>(Aw, dang it.)</i></li>
+                    <li>Check the pinouts of the Blaster and FPGA board <i>(Aw, dang it.)</i></li>
+                    <li>Use the pinouts to manually wire the 10-wire connection using jumper cables <i>(Aw, dang it.)</i></li>
+                    <li>Realise it might just be that one of the Chinese mfg.s misread the diagram and flipped the pinout 180 degrees.
+                        So, cut a hole in the Blaster to make the wire fit the other way around, and try again. <i>(Aw, dang it.)</i></li>
+                    <li>Use a multimeter to confirm the connections between the board and blaster <i>(Aw, dang it.)</i></li>
+                    <li>Swap the jumper cables on the FPGA board to change the logic level, confirm the logic level is being reached on the blaster <i>(Aw, dang it.)</i></li>
+                    <li>Try changing the timing on the Blaster between the default, 6M, 1M, and 250k <i>(Aw, dang it.)</i></li>
+                    <li>Go back and check the AliExpress listing for the blaster, and see this comment:</li>
+                </ul>
+                <img src="assets/img/projects/fpga_doohickey/new_firmware.png">
+                <br>
+                ...but to make it work with CycloneIV EP4CE6E22C8N, <strong>you need to flash it with new firmware.</strong> Ah.
+                Of course, since this wasn't a true CPLD-based USB-Blaster, but a CH552G-based clone, and a cheaply-made one at that, any minor difference in (I can only assume)
+                the timing would cascade into an inability to detect devices on the JTAG chain. Luckily, there were a few options, both closed- and open-source to flash.
+                And instructions, courtesy of <a href="https://elerain.com/reflating-the-firmware-of-low-cost-chinese-usb-blaster-equivalent-clone/">elerain.com</a> 
+                (which was based off <a href="https://www.downtowndougbrown.com/2024/06/fixing-a-knockoff-altera-usb-blaster-that-never-worked/">Doug Brown's work</a> 
+                (which was based off <a href="https://github.com/VladimirDuan/CH55x-USB-Blaster">Vladimir Duan's unfixed CH55x sources</a> (you can see how fun the 
+                open-source community is - at least everyone gives credit!)))
+                Anyway, turns out that there was only a chance that this CH552G clone would work, and to do so, I had to (find! and) solder a, say, 10k resistor between D+ and 3v3.
+                I looked at the pins on the board, and saw that the pins were thinner than the resistor legs themselves. I then looked at Doug's site, who seemed to be lucky enough to
+                buy a board with test points.
+                <br>
+                <br>
+                At this point, I had a few options: I could suffer through trying to solder the resistor legs to the tiny pins, with only a hope that this might work. I could buy
+                a new CH552G-based blaster clone with test points on AliExpress for about 10 bucks, OR I could do the sensible thing and buy a CPLD-based Altera USB-Blaster v2 (which still seems
+                to support my CycloneIV board). Having been fed up with the knockoffs and all their associated fun, I dropped about 50 dollars on a used V2 blaster off Ebay.
+                <br>
+                <br>
+                Now, we wait for it to arrive. Let's hope this won't be an enormous waste of money and 2 weeks of waiting...
+            </p>
+          </article>
+          *I first installed the latest version, but quickly found out that the USB-Blaster I clone I had only worked with versions up to 15.1.
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
