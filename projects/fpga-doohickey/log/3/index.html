@@ -51,40 +51,50 @@
               <span class="pill">FPGA Doohickey</span>
             </header>
             <p>
-                Okay I'll admit - I didn't expect this to work in the first place, just hoped for the best. The AliExpress reviews seemed to indicate that the programmer worked, 
-                so, really, how hard could it be to set up? 6 hours of troubleshooting later, here we are. Here's how it went down:
+                <strong>Okay I'll admit - I didn't expect this to work in the first place, just hoped for the best. The AliExpress reviews seemed to indicate that the programmer worked, 
+                so, really, how hard could it be to set up? 6 hours of troubleshooting later, here we are. Here's how it went down:</strong>
                 <br>
                 <br>
                 After installing Quartus 15.1* natively on my Manjaro system, I connected the JTAG programmer to my computer, and the board to the programmer. 
                 From there, I opened up Quartus, and went straight to <i>Tools > Programmer</i>.
                 <br>
-                <img src="assets/img/projects/fpga_doohickey/Programmer.png">
+                <img src="/assets/img/projects/fpga_doohickey/Programmer.png">
                 <br>
                 Upon clicking Hardware Setup, i was greeted with an empty list. Amazing!
                 I started by checking if the system detected the device at all:
+                <br>
                 <br>
                 <code>lsusb | grep -i altera</code>
                 <br>
                 This returned a line with the device ID <code>09fb:6001</code>, which seemed to indicate that the device was at least detected by the system.
                 I then went to check the permissions of the device node:
                 <br>
+                <br>
                 <code>ls -l /dev/bus/usb/*/*</code>
+                <br>
                 <br>
                 Looking for my device's port and bus numbers from the previous command's output. I saw the device was owned by root, and per my research, Quartus
                 could not access USB devices not owned by the current user. So, I created a udev rule file:
                 <br>
+                <br>
                 <code>sudo nano /etc/udev/rules.d/51-usbblaster.rules</code>
+                <br>
                 <br>
                 Into which I added:
                 <br>
+                <br>
                 <code>SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", MODE="0660", GROUP="uucp"</code>
+                <br>
                 <br>
                 After saving the file, I made sure I was in the uucp group and reloaded the udev rules using:
                 <br>
-                <code>sudo usermod -aG uucp $USER</code>
-                <code>sudo udevadm control --reload-rules && sudo udevadm trigger</code>
+                <br>
+                <code>sudo usermod -aG uucp $USER
+                <br>sudo udevadm control --reload-rules && sudo udevadm trigger</code>
+                <br>
                 <br>
                 Then, as any good IT guy would do, I unplugged and replugged the blaster. Still not seeing anything on the GUI, I tried the CLI approach:
+                <br>
                 <br>
                 <code>/opt/altera_lite/15.1/quartus/bin/jtagd</code>
                 in one terminal, and in another:
@@ -95,12 +105,19 @@
                 Weirdly though, the jtagd refused to daemonise. It just started and immediately stopped. "Correct me if I'm wrong," I thought, "but that's not how daemons work..."
                 So let's go investigate the alleged daemon. First, we check if it's already running, thus killing my attempts to start a second instance:
                 <br>
-                <code>psgrep -a jtagd</code>
-                <code>ps aux | grep -i jtagd | grep -v grep</code>
+                <br>
+                <code>psgrep -a jtagd
+                <br>>ps aux | grep -i jtagd | grep -v grep</code>
+                <br>
+                <br>
                 Nothing shows up. No running daemons. Next, I try to run it with the --help flag to see if there's anything I'm missing:
                 <br>
+                <br>
                 <code>sudo /opt/altera_lite/15.1/quartus/bin/jtagd --help</code>
+                <br>
+                <br>
                 That gives me:
+                <br>
                 <code>
                 jtagd
                 <br>
@@ -115,19 +132,25 @@
                 <br>
                 ...
                 </code>
+                <br>
+                <br>
                 Ah. <strong>You should not need to run this command. Please use the jtagconfig command to control the JTAG Server.</strong>. 
                 Let's try jtagconfig, then:
                 <br>
+                <br>
                 <code>/opt/altera_lite/15.1/quartus/bin/jtagconfig</code>
+                <br>
                 <br>
                 Returning:
                 <br>
                 <code>No JTAG hardware available.</code>
                 <br>
+                <br>
                 Huh. So we know the device is there and readable by the system, but the Quartus JTAG tools refuse to claim it.
                 After some more digging, it turns out that Quartus has an env script that I need to run to set up variables and the like. I tried running it in my
                 zsh terminal, but that would immediately crash it. Crap. So, I tried running it in a bash terminal, which complained about not being able to find the
                 QUARTUS_ROOTDIR env variable. Here's the code that finally got that fixed.
+                <br>
                 <br>
                 <code>bash -lc '
                         export QUARTUS_ROOTDIR=/opt/altera_lite/15.1/quartus
@@ -135,55 +158,73 @@
                         /opt/altera_lite/15.1/quartus/bin/jtagconfig'
                 </code>
                 <br>
+                <br>
                 Well, at least it doesn't crash now. Let's add the env vars to my ~/.zshrc so I don't have to do this every time:
+                <br>
                 <br>
                 <code>
                     export QUARTUS_ROOTDIR=/opt/altera_lite/15.1/quartus
                     export PATH=$QUARTUS_ROOTDIR/bin:$PATH
                 </code>
                 <br>
+                <br>
                 Result? No. JTAG. hardware. available. End my suffering. Let's see the debug mode on jtagconfig:
+                <br>
                 <br>
                 <code>
                     sudo /opt/altera_lite/15.1/quartus/bin/jtagconfig --debug
                 </code>
+                <br>
                 <br>
                 The result? Just over 3000 words worth of debug output. Skimming through it, I found something interesting. jtagd wasn't a daemon. It was just a 
                 wrapper script that spawns shell commands and loads stuff: off we go to investigate the jtagd script. I installed strace 
                 to see what was going on, and finally found the culprit: jtagd kept exiting because it couldn't bind to the localhost 1309 port. 
                 Why?? I had already taken care of anything that might be using port 1309?? 
                 <br>
+                <br>
                 <code>
                     grep aux | grep -E 'jtagd|1309' | grep -v grep
                 </code>
+                <br>
+                <br>
                 <code>
                     LISTEN 0 0 0.0.0.0:1309 0.0.0.0:* users:(("wineserver", pid=...))
-                    ...
+                    <br>...
                 </code>
+                <br>
                 <br>
                 "LOL, Nope." Turns out, I didn't uninstall Wine Quartus properly, and it was still running a jtag server. 
                 After killing all Wine processes and uninstalling the Wine Quartus properly, I restarted my computer to be sure, and tried again.
                 Let's try that again:
                 <br>
+                <br>
                 <code>
                     sudo /opt/altera_lite/15.1/quartus/bin/jtagd --user-start
                     /opt/altera_lite/15.1/quartus/bin/jtagconfig
                 </code>
+                <br>
+                <br>
                 <code>
                     1) USB-Blaster [13-4.2]
                 </code>
                 <br>
+                <br>
                 Finally. Let's open up the Quartus Programmer GUI again, and check Hardware Setup. This time, the USB-Blaster showed up. However,
                 when I went to auto-detect hardware, I got an empty list. Back to the CLI we go:
+                <br>
                 <br>
                 <code>
                     /opt/altera_lite/15.1/quartus/bin/jtagconfig -c 1 -n                   
                 </code>
+                <br>
+                <br>
                 <code>
                     Error when scanning hardware - No devices                   
                 </code>
                 <br>
+                <br>
                 Looks like our device chain is empty. Here are the next couple hours of troubleshooting boiled down to a few lines.
+                <br>
                 <br>
                 <strong>Let's go gambling!</strong>
                 <ul>
@@ -198,7 +239,9 @@
                     <li>Try changing the timing on the Blaster between the default, 6M, 1M, and 250k <i>(Aw, dang it.)</i></li>
                     <li>Go back and check the AliExpress listing for the blaster, and see this comment:</li>
                 </ul>
+                <br>
                 <img src="assets/img/projects/fpga_doohickey/new_firmware.png">
+                <br>
                 <br>
                 ...but to make it work with CycloneIV EP4CE6E22C8N, <strong>you need to flash it with new firmware.</strong> Ah.
                 Of course, since this wasn't a true CPLD-based USB-Blaster, but a CH552G-based clone, and a cheaply-made one at that, any minor difference in (I can only assume)

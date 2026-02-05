@@ -123,6 +123,16 @@ p{ margin: 10px 0; }
 
 .muted{ color: var(--muted); }
 
+code{
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 80%, #9ca3af 20%);
+  color: var(--fg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 /* Defaults for lists */
 ul{ margin: 10px 0; padding-left: 1.1rem; }
 li{ margin: 6px 0; }
