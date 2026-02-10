@@ -18,6 +18,5 @@
 }
 
 a:hover .pill{
-  background: color-mix(in srgb, var(--accent) 35%, var(--card));
   border-color: color-mix(in srgb, var(--border) 70%, var(--accent));
 }
