@@ -13,6 +13,7 @@
   font-weight: 500;
   line-height: 1;
 
+  color: var(--inverse-color);
   background: color-mix(in srgb, var(--accent) 25%, var(--card));
 }
 

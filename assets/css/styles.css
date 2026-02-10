@@ -19,6 +19,8 @@
   --radius: 16px;
   --radius-sm: 12px;
 
+  --color: #000;
+  --inverse-color: #fff;
   --shadow: 0 2px 12px rgba(0,0,0,.25);
 }
 
@@ -32,6 +34,7 @@
   --accent:#7fa4d8;
 
   --color: #000;
+  --inverse-color: #fff;
   --shadow: 0 2px 14px rgba(0,0,0,.08);
 }
 
