@@ -21,94 +21,9 @@
   .project-list .cards{ grid-template-columns: repeat(3, 1fr); }
 }
 
-.project-list a.card{
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-
-  aspect-ratio: 1 / 1;
-  padding: 14px;
-
-  border-radius: 1rem;
-  overflow: hidden;
-  isolation: isolate;
-
-  background: var(--card);
-  color: #fff;
-  text-decoration: none;
-
-  box-shadow: var(--shadow);
-  transition: transform .2s ease;
-}
-
-.project-list a.card:hover{
-  transform: translateY(-2px);
-  text-decoration: none;
-}
-
-.project-list a.card > *{
-  position: relative;
-  z-index: 1;
-}
-
-.project-list a.card::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-
-  background-image: var(--img, none);
-  background-size: cover;
-  background-position: center;
-
-  filter: blur(2px) brightness(.75) saturate(1);
-  transform: scale(1.08);
-  transition: filter .25s ease, transform .25s ease;
-}
-
-.project-list a.card::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-
-  background: linear-gradient(180deg, rgba(0,0,0,.15) 30%, rgba(0,0,0,.6) 100%);
-  opacity: .95;
-  transition: opacity .25s ease;
-}
-
-.project-list a.card:hover::before{
-  filter: blur(2px) brightness(.85) saturate(1.05);
-  transform: scale(1.12);
-}
-
-.project-list a.card:hover::after{
-  opacity: 1;
-}
-
-.project-list a.card h3{
-  margin: 0 0 4px 0;
-  font: 800 20px/1.15 Georgia,"Times New Roman",serif;
-  color: inherit;
-}
-
-.project-list a.card p{
-  margin: 0;
-  font-size: 13px;
-  opacity: .92;
-  color: inherit;
-}
-
 .project-list .card-tags{
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
-}
-
-.project-list .card-tags .pill{
-  color: var(--fg);
-  border-color: color-mix(in srgb, var(--border) 75%, var(--accent));
-  background: color-mix(in srgb, #000 40%, transparent);
 }

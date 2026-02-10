@@ -1,0 +1,23 @@
+/* 
+   Shared pill/tag component.
+*/
+
+.pill{
+  display: inline-block;
+  padding: 5px 10px;
+
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+
+  color: #fff;
+  background: color-mix(in srgb, var(--accent) 25%, var(--card));
+}
+
+a:hover .pill{
+  background: color-mix(in srgb, var(--accent) 35%, var(--card));
+  border-color: color-mix(in srgb, var(--border) 70%, var(--accent));
+}
