@@ -106,3 +106,27 @@
   padding: 10px 12px;
   font-size: 13px;
 }
+
+.full-width-media {
+  margin-top: 18px;
+}
+
+.full-width-media figure {
+  margin: 0;
+}
+
+.full-width-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.full-width-media figcaption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
