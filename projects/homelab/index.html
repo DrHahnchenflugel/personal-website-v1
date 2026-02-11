@@ -74,7 +74,7 @@
           <div class="callout">
             <strong>Design constraint:</strong>
             Everything runs on hardware I control. If I can't deploy it, back it up, and restore it myself,
-            it's not an acceptable dependency.
+            it's not an acceptable dependency.<br>
             <i>There is one exception: I need Cloudflare Tunnel for reasons described below, so that's the only externally controlled source.
               However, all content is E2EE, so all my data continues to be fully under my control.
             </i>
@@ -90,8 +90,9 @@
             <div class="card-lite">
               <h3>Platform</h3>
               <ul>
-                <li><strong>Host:</strong> Proxmox (plus a passthrough Linux workstation)</li>
+                <li><strong>Host:</strong> Proxmox with a dedicated passthrough host OS</li>
                 <li><strong>Primary VM:</strong> Ubuntu Server (aka, "the Sarlacc Pit") running Docker Compose</li>
+                <li><strong>Perimary Workstation:</strong> Manjaro running on the same hardware as the rest of the site</li>
                 <li><strong>Ingress:</strong> Cloudflare Tunnel -> HAProxy -> internal services</li>
                 <li><strong>Public exposure:</strong> Website only</li>
               </ul>
@@ -100,6 +101,8 @@
               <h3>Core priorities</h3>
               <ul>
                 <li><strong>Single-entry point model:</strong> no direct port forwarding. Everything is forwarded through CF Tunnel</li>
+                <li><strong>Side-by-side allocation:</strong> I want my main workstation (Manjaro) to be on the same hardware as the rest of the system.
+                 If my Manjaro is turned down, the Sarlacc Pit stays up. If the Sarlacc Pit goes down, my Manjaro system is not affected.</li>
                 <li><strong>Service isolation:</strong> networks with limited definition, limited reachability</li>
                 <li><strong>Control:</strong> easy to understand upgrades and configuration changes, so I have limited issues dealing with my system</li>
               </ul>
@@ -117,10 +120,10 @@
               <h3>Computer</h3>
               <ul>
                 <li><strong>CPU:</strong> Ryzen 9 5950X (16C / 32T)</li>
-                <li><strong>CPU split:</strong> 8 cores reserved for Proxmox, 8 cores reserved for my personal workstation</li>
+                <li><strong>CPU split:</strong> cores are partitioned between virtualization workloads and a passthrough host OS</li>
                 <li><strong>RAM:</strong> 16 GB DDR4</li>
                 <li><strong>Motherboard:</strong> ASRock X570M Pro4</li>
-                <li><strong>GPU:</strong> RTX 2060 (PCIe passthrough to my personal workstation)</li>
+                <li><strong>GPU:</strong> RTX 2060 (PCIe passthrough to a dedicated host OS)</li>
               </ul>
             </div>
 
@@ -143,7 +146,7 @@
                 <div>
                   <strong>Hardware photo placeholder</strong><br/>
                   photo of the machine here (front/side).<br />
-                  <span class="diagram-note">File:server-photo.jpg</span>
+                  <img src="/assets/img/projects/homelab/homelab_1_modified_2.jpg">
                 </div>
               </div>
               <figcaption>Physical host.</figcaption>
