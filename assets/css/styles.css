@@ -147,3 +147,31 @@ li strong{ margin-right: 6px; }
 
 /* center aligning utility class */
 .center{ text-align: center; }
+
+.expandable-img {
+  cursor: zoom-in;
+  transition: transform .15s ease;
+}
+
+.expandable-img:hover {
+  transform: scale(1.01);
+}
+
+.img-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-modal-content {
+  max-width: 92%;
+  max-height: 90%;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  border: 1px solid var(--border);
+}
