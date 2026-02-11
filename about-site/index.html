@@ -1,13 +1,17 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>About This Site - Victor Lelikov</title>
 
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/about/about.css">
+    <!-- paint viewport to avoid white flash -->
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
 
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
     <link rel="icon" href="/assets/img/favicons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
@@ -18,105 +22,84 @@
     <div id="site-header"></div>
 
     <main>
-      <section class="about">
+      <!-- Hero -->
+      <section class="project-hero">
         <div class="container">
+          <h1 class="project-title">About This Site</h1>
+          <p class="project-sub muted">
+            How I built this site, how I host it, and how traffic reaches it.
+          </p>
 
-            <header class="about-head">
-            <h1 class="page-title">About this site</h1>
-            <p class="muted">How it’s hosted, how traffic reaches it, and what’s next.</p>
-            </header>
-
-            <div class="about-sections">
-
-            <section class="about-block" id="hosting">
-                <h2 class="about-title">Hosting</h2>
-                <p class="about-subtitle">Self-hosted homelab</p>
-
-                <div class="kv">
-                <div class="kv-row"><span class="kv-k"><strong>Platform:</strong></span> <span class="kv-v">Proxmox</span></div>
-                <div class="kv-row"><span class="kv-k"><strong>Host OS:</strong></span> <span class="kv-v">Ubuntu Server</span></div>
-                <div class="kv-row"><span class="kv-k"><strong>Deploy:</strong></span> <span class="kv-v">Docker Compose</span></div>
-                </div>
-            </section>
-
-            <section class="about-block" id="routing">
-                <h2 class="about-title">Routing</h2>
-                <p class="about-subtitle">Cloudflare Tunnel → HAProxy</p>
-
-                <p class="about-text">
-                Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.
-                </p>
-
-                <div class="kv">
-                <div class="kv-row"><span class="kv-k"><strong>Flow:</strong></span> <span class="kv-v">Cloudflare → tunnel → HAProxy → containers</span></div>
-                <div class="kv-row">
-                    <span class="kv-k"><strong>Inbound ports:</strong></span>
-                    <span class="kv-v"><span class="pill-strong">None exposed to the internet</span></span>
-                </div>
-                </div>
-            </section>
-
-            <section class="about-block" id="tls">
-                <h2 class="about-title">TLS</h2>
-                <p class="about-subtitle">Terminated at Cloudflare</p>
-
-                <p class="about-text">
-                HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.
-                </p>
-            </section>
-
-            <section class="about-block" id="deploy">
-                <h2 class="about-title">Deployments</h2>
-                <p class="about-subtitle">Automated Git updates</p>
-
-                <div class="kv">
-                <div class="kv-row"><span class="kv-k"><strong>Source of truth:</strong></span> <span class="kv-v">GitHub</span></div>
-                <div class="kv-row">
-                    <span class="kv-k"><strong>Update method:</strong></span>
-                    <span class="kv-v"><code>git pull</code> every 5 minutes (systemd timer)</span>
-                </div>
-                </div>
-
-                <div class="actions">
-                <a class="btn primary" href="/projects/">See projects</a>
-                </div>
-            </section>
-
-            <section class="about-block" id="future">
-                <h2 class="about-title">Future plans</h2>
-                <p class="about-subtitle">What I’ll be adding</p>
-
-                <ul class="about-list">
-                <li>Request logging</li>
-                <li>Uptime monitoring</li>
-                <li>Analytics / tracking</li>
-                </ul>
-
-                <p class="muted">Also: more projects, with writeups as they land.</p>
-            </section>
-
-            <section class="about-block" id="intent">
-                <h2 class="about-title">Intent</h2>
-                <p class="about-subtitle">Portfolio + infrastructure demo</p>
-
-                <p class="about-text">
-                This is both a portfolio and a live demonstration of the infrastructure I run.
-                Built for control, iteration, and security.
-                </p>
-
-                <div class="meta">
-                <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
-                <div><strong>Tracking:</strong> none</div>
-                </div>
-            </section>
-
-            </div>
+          <div class="project-actions">
+            <a class="btn" href="/">< Home</a>
+            <a class="btn btn-primary" href="https://github.com/DrHahnchenflugel/personal-website-v1" target="_blank" rel="noopener">GitHub</a>
+          </div>
         </div>
       </section>
-    </main>
+
+      <!-- What it is -->
+      <section>
+        <div class="container">
+          <h2>What this is & why I built it</h2>
+          <p>
+            This is both a portfolio site showcasing my projects and a technical demo of my web development and hosting capabilities. 
+            The main focus is on the projects themselves, but I also want to share how the site is built and hosted for anyone interested in the technical details. 
+            The site is designed to be minimal and modern, with a focus on performance and accessibility.
+          </p>
+        </div>
+      </section>
+
+      <!-- Basic tech stack -->
+      <section>
+        <div class="container">
+          <h2>Hosting</h2>
+          <div class="project-meta">
+            <strong>Hardware:</strong> <a href="/projects/homelab">Custom-built server</a> <br>
+            <strong>Platform:</strong>Proxmox VE <br>
+            <strong>Host OS:</strong> Ubuntu Server <br>
+            <strong>Deploy:</strong>  Docker Compose <br>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sections -->
+      <section>
+        <div class="container">
+          <h2>Routing</h2>
+          <ul>
+            <li><strong>Flow:</strong> Web > Cloudflare > CF Tunnel > HAProxy > Docker-Compose Container service the site.</li>
+            <li><strong>Inbound Ports:</strong> None exposed to the internet</li>
+            <li><strong>TLS, HTTPS:</strong> TLS is terminated at Cloudflare. 
+                HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <h2>Deployments</h2>
+          <ul>
+            <li><strong>Source of truth:</strong> GitHub</li>
+            <li><strong>Update method:</strong> systemd timer running a bash script that pulls from Github every 5 minutes.</li>
+          </ul>
+        </div>
+      </section>
+
+
+      <section>
+        <div class="container">
+          <h2>Future Plans</h2>
+          <ul>
+            <li>Request Logging</li>
+            <li>Uptime Monitoring</li>
+            <li>Analysis & Tracking</li>
+          </ul>
+
+          Also: More projects, with writeups as they land.
+        </div>
+      </section>
 
     <div id="site-footer"></div>
-
     <script src="/assets/js/theme.js?v=dev3" defer></script>
     <script src="/assets/js/header.js?v=dev3" defer></script>
     <script src="/assets/js/footer.js?v=dev3" defer></script>
