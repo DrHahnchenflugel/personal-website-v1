@@ -3,15 +3,35 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Maintenance App - Victor Lelikov</title>
+    <title>Self-Hosted Infrastructure - Victor Lelikov</title>
 
     <!-- paint viewport to avoid white flash -->
     <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
 
+    <!-- your existing CSS -->
     <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
-    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
-    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
-    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/pill.css?v=dev2" />
+
+    <!-- diagram placeholders (keep tiny; remove once you have real images) -->
+    <style>
+      .diagram-placeholder{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        min-height: 220px;
+        padding: 18px;
+        background: color-mix(in srgb, var(--card) 75%, transparent);
+        border: 1px dashed var(--border);
+        border-radius: 14px;
+        color: var(--muted);
+        text-align:center;
+      }
+      .diagram-placeholder strong{ color: var(--fg); }
+      .diagram-note{ font-size: 12px; margin-top: 6px; color: var(--muted); }
+    </style>
+
+    <!-- favicons -->
     <link rel="icon" href="/assets/img/favicons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
@@ -19,159 +39,302 @@
   </head>
 
   <body>
-    <header>
-      <div class="container row">
-        <a href="/" style="font-weight:600; color:var(--fg); text-decoration:none;">Victor Lelikov</a>
-        <nav>
-          <a href="/projects/">Projects</a>
-          <a href="/homelab/">About This Site</a>
-          <a href="/contact/">Contact</a>
-          <a href="#" id="themeToggle">Turn on the lights</a>
-        </nav>
-      </div>
-    </header>
+    <!-- injected header -->
+    <div id="site-header"></div>
 
     <main>
-      <!-- Hero -->
-        <section class="project-hero">
+      <!-- HERO -->
+      <section class="project-hero">
         <div class="container">
-            <div class="project-crumbs muted">Projects / Self-Hosted Infrastructure</div>
-            <h1 class="project-title">Self-Hosted Infrastructure</h1>
-            <p class="project-sub muted">
-            A personally operated server stack for running production services without relying on managed platforms.
-            </p>
+          <div class="project-crumbs muted">
+            <a href="/projects/">Projects</a> / Self-Hosted Infrastructure
+          </div>
 
-            <div class="project-meta">
+          <h1 class="project-title">Self-Hosted Infrastructure</h1>
+          <p class="project-sub muted">
+            A personally operated server stack for running services on hardware I control - with controlled ingress,
+            clear boundaries, and a setup I can actually figure out when something breaks.
+          </p>
+
+          <div class="project-meta">
             <span class="pill">Proxmox</span>
             <span class="pill">Docker</span>
             <span class="pill">Linux</span>
             <span class="pill">Cloudflare Tunnel</span>
-            <span class="pill">PostgreSQL</span>
-            </div>
+            <span class="pill">HAProxy</span>
+            <span class="pill">CrowdSec</span>
+            <span class="pill">Storage</span>
+          </div>
 
-            <div class="project-actions">
-            <a class="btn" href="/projects/"> Back to Projects</a>
-            </div>
-        </div>
-        </section>
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+          </div>
 
-        <section>
-        <div class="container">
-            <h2>What this is</h2>
-            <p>
-            This is a self-hosted environment I use to run services: internal tools, personal apps,
-            and infrastructure that needs to stay online and recover cleanly when something breaks.
-            </p>
-
-            <p class="muted">
-            It is not a demo setup. It exists because I need control over deployment, data, and failure modes.
-            </p>
-        </div>
-        </section>
-
-        <section>
-        <div class="container">
-            <h2>Why I built it</h2>
-
-            <p>
-            I wanted an environment where I can:
-            </p>
-
-            <ul>
-            <li>Run services without external dependencies.</li>
-            <li>Understand exactly how traffic reaches each app.</li>
-            <li>Control upgrades, downtime, and recovery.</li>
-            <li>Fix problems directly instead of working around them.</li>
-            </ul>
-        </div>
-        </section>
-
-        <section>
-        <div class="container">
-            <div class="callout">
+          <div class="callout">
             <strong>Design constraint:</strong>
-            All services run on hardware I control. If I can't deploy it, back it up, and restore it myself,
+            Everything runs on hardware I control. If I can't deploy it, back it up, and restore it myself,
             it's not an acceptable dependency.
-            </div>
+            <i>There is one exception: I need Cloudflare Tunnel for reasons described below, so that's the only externally controlled source.
+              However, all content is E2EE, so all my data continues to be fully under my control.
+            </i>
+          </div>
         </div>
-        </section>
+      </section>
 
-        <section>
+      <!-- AT A GLANCE -->
+      <section class="section-rule">
         <div class="container">
-            <h2>What runs on it</h2>
-
-            <ul>
-            <li>Internal web apps.</li>
-            <li>PostgreSQL databases with local backups.</li>
-            <li>Media and automation services isolated from core systems.</li>
-            <li>Reverse proxy and tunnel-based ingress.</li>
-            </ul>
-
-            <p class="muted">
-            Services are segmented. Not everything can see everything else, and nothing is exposed without intent.
-            </p>
-        </div>
-        </section>
-
-        <section>
-        <div class="container">
-            <h2>Technical approach</h2>
-
-            <div class="grid-2">
+          <h2>At a glance</h2>
+          <div class="grid-2">
             <div class="card-lite">
-                <h3>Infrastructure</h3>
-                <ul>
-                <li>Proxmox host with VMs and containers.</li>
-                <li>Linux-based guests with minimal base installs.</li>
-                <li>Snapshots and backups treated as first-class requirements.</li>
-                </ul>
+              <h3>Platform</h3>
+              <ul>
+                <li><strong>Host:</strong> Proxmox (plus a passthrough Linux workstation)</li>
+                <li><strong>Primary VM:</strong> Ubuntu Server (aka, "the Sarlacc Pit") running Docker Compose</li>
+                <li><strong>Ingress:</strong> Cloudflare Tunnel -> HAProxy -> internal services</li>
+                <li><strong>Public exposure:</strong> Website only</li>
+              </ul>
+            </div>
+            <div class="card-lite">
+              <h3>Core priorities</h3>
+              <ul>
+                <li><strong>Single-entry point model:</strong> no direct port forwarding. Everything is forwarded through CF Tunnel</li>
+                <li><strong>Service isolation:</strong> networks with limited definition, limited reachability</li>
+                <li><strong>Control:</strong> easy to understand upgrades and configuration changes, so I have limited issues dealing with my system</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HARDWARE -->
+      <section class="section-rule">
+        <div class="container">
+          <h2>Hardware</h2>
+          <div class="grid-2">
+            <div class="card-lite">
+              <h3>Computer</h3>
+              <ul>
+                <li><strong>CPU:</strong> Ryzen 9 5950X (16C / 32T)</li>
+                <li><strong>CPU split:</strong> 8 cores reserved for Proxmox, 8 cores reserved for my personal workstation</li>
+                <li><strong>RAM:</strong> 16 GB DDR4</li>
+                <li><strong>Motherboard:</strong> ASRock X570M Pro4</li>
+                <li><strong>GPU:</strong> RTX 2060 (PCIe passthrough to my personal workstation)</li>
+              </ul>
             </div>
 
             <div class="card-lite">
-                <h3>Application layer</h3>
-                <ul>
-                <li>Docker Compose for service definition.</li>
-                <li>Explicit networking between containers.</li>
-                </ul>
+              <h3>Storage inventory</h3>
+              <ul>
+                <li><strong>NVMe:</strong> 1 TB</li>
+                <li><strong>SSDs:</strong> 640 GB, 480 GB, 256 GB</li>
+                <li><strong>HDDs:</strong> 2 TB x 2, 12 TB x 1</li>
+                <li><strong>Filesystems:</strong> LVM (boot NVMe), EXT4 (most disks), XFS (12 TB media)</li>
+              </ul>
             </div>
+          </div>
+
+          <!-- server photo placeholder -->
+          <div class="shots" style="margin-top:14px;">
+            <figure class="shot">
+              <!-- with real photo, use <img> instead of the placeholder div -->
+              <div class="diagram-placeholder">
+                <div>
+                  <strong>Hardware photo placeholder</strong><br/>
+                  photo of the machine here (front/side).<br />
+                  <span class="diagram-note">File:server-photo.jpg</span>
+                </div>
+              </div>
+              <figcaption>Physical host.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHITECTURE + DIAGRAMS -->
+      <section class="section-rule">
+        <div class="container">
+          <h2>System maps</h2>
+          <p class="muted">
+            I'm trying to show exactly how requests enter the system, where services live, and how storage is laid out.
+          </p>
+
+          <div class="shots">
+            <!-- Top-level architecture -->
+            <figure class="shot">
+              <!-- Replace with real SVG/PNG -->
+              <!-- <img src="/assets/img/diagrams/infra-architecture.svg" alt="Infrastructure architecture diagram" /> -->
+              <div class="diagram-placeholder">
+                <div>
+                  <strong>Diagram 1: Architecture map</strong><br />
+                  Bare metal -> Proxmox -> VMs/LXCs -> Docker stacks
+                  <div class="diagram-note">TODO: /assets/img/diagrams/infra-architecture.svg</div>
+                </div>
+              </div>
+              <figcaption>Top-level architecture: hypervisor, guests, and where services run.</figcaption>
+            </figure>
+
+            <!-- 2) Network / ingress -->
+            <figure class="shot">
+              <!-- <img src="/assets/img/diagrams/infra-network.svg" alt="Network and ingress diagram" /> -->
+              <div class="diagram-placeholder">
+                <div>
+                  <strong>Diagram 2: Network & ingress</strong><br />
+                  Internet -> Cloudflare Tunnel -> HAProxy -> services
+                  <div class="diagram-note">TODO: /assets/img/diagrams/infra-network.svg</div>
+                </div>
+              </div>
+              <figcaption>Entry model: single entry point, intentional exposure, everything else private.</figcaption>
+            </figure>
+
+            <!-- 3) Storage layout -->
+            <figure class="shot">
+              <!-- <img src="/assets/img/diagrams/infra-storage.svg" alt="Disk and storage layout diagram" /> -->
+              <div class="diagram-placeholder">
+                <div>
+                  <strong>Diagram 3: Storage layout</strong><br />
+                  Drives -> filesystems -> what lives where
+                  <div class="diagram-note">TODO: /assets/img/diagrams/infra-storage.svg</div>
+                </div>
+              </div>
+              <figcaption>Storage map: physical disks, filesystems, and dataset roles.</figcaption>
+            </figure>
+
+            <!-- 4) Service segmentation -->
+            <figure class="shot">
+              <!-- <img src="/assets/img/diagrams/infra-segmentation.svg" alt="Service segmentation diagram" /> -->
+              <div class="diagram-placeholder">
+                <div>
+                  <strong>Diagram 4: Service segmentation</strong><br />
+                  Core infra vs personal vs public
+                  <div class="diagram-note">TODO: /assets/img/diagrams/infra-segmentation.svg</div>
+                </div>
+              </div>
+              <figcaption>Service grouping and isolation: what can reach what, and why.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIRTUALIZATION LAYOUT -->
+      <section class="section-rule">
+        <div class="container">
+          <h2>Virtualization layout</h2>
+          <div class="grid-2">
+            <div class="card-lite">
+              <h3>LXC 101 - Cloudflare ingress</h3>
+              <ul>
+                <li><strong>OS:</strong> Debian-based</li>
+                <li><strong>Purpose:</strong> Cloudflared (and lightweight terminal access)</li>
+                <li><strong>Resources:</strong> 1 core, 256 MB RAM, ~2 GB disk</li>
+                <li><strong>Why:</strong> tiny footprint, minimal surface area, dedicated role</li>
+              </ul>
             </div>
+
+            <div class="card-lite">
+              <h3>VM - “Sarlacc Pit” (Ubuntu Server)</h3>
+              <ul>
+                <li><strong>Purpose:</strong> main service host (Docker Compose)</li>
+                <li><strong>Resources:</strong> 7 cores, ~7.3 GB RAM, ~220 GB system disk</li>
+                <li><strong>Storage:</strong> attached bulk disks for app data + media</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        </section>
+      </section>
 
-        <section>
+      <!-- SERVICES -->
+      <section class="section-rule">
         <div class="container">
-            <h2>What this is not</h2>
-            <ul>
-            <li>Not a “cloud replacement” experiment.</li>
-            <li>Not optimized for infinite scale.</li>
-            <li>Not dependent on fragile automation.</li>
-            </ul>
+          <h2>Services</h2>
+          <p class="muted">
+            Deployed with Docker Compose on the Ubuntu VM. The personal site is the only public-facing service.
+          </p>
 
-            <p class="muted">
-            The goal is reliability and understanding, not novelty.
-            </p>
+          <div class="grid-2">
+            <div class="card-lite">
+              <h3>Core infrastructure</h3>
+              <ul>
+                <li><strong>HAProxy:</strong> reverse proxy / routing</li>
+                <li><strong>Cloudflare Tunnel:</strong> ingress (no direct port forwarding)</li>
+                <li><strong>CrowdSec:</strong> detection + blocking for abusive patterns</li>
+                <li><strong>Gluetun:</strong> network isolation for selected traffic</li>
+              </ul>
+            </div>
+
+            <div class="card-lite">
+              <h3>Personal & internal services</h3>
+              <ul>
+                <li><strong>Home Assistant</strong></li>
+                <li><strong>Jellyfin</strong></li>
+                <li><strong>Nextcloud</strong></li>
+                <li><strong>Jellyseerr</strong></li>
+                <li><strong>Sonarr / Radarr / Prowlarr</strong></li>
+                <li><strong>qBittorrent</strong></li>
+                <li><strong>Website</strong></li>
+              </ul>
+            </div>
+          </div>
         </div>
-        </section>
+      </section>
 
-        <section>
+      <!-- SECURITY -->
+      <section class="section-rule">
         <div class="container">
-            <h2>Next steps</h2>
-            <ul>
+          <h2>Security model</h2>
+          <div class="grid-2">
+            <div class="card-lite">
+              <h3>Ingress rules</h3>
+              <ul>
+                <li><strong>Default:</strong> private</li>
+                <li><strong>Public:</strong> website only</li>
+                <li><strong>Admin access:</strong> gated behind Cloudflare Access + 2FA</li>
+                <li><strong>No:</strong> direct port forwarding</li>
+              </ul>
+            </div>
+
+            <div class="card-lite">
+              <h3>Preventative controls</h3>
+              <ul>
+                <li><strong>CrowdSec:</strong> watches for repeated failures and abusive clients</li>
+                <li><strong>Segmentation:</strong> services are not implicitly reachable</li>
+                <li><strong>Deliberate exposure:</strong> nothing is exposed "because it's easier"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WHAT I CHOSE NOT TO DO -->
+      <section class="section-rule">
+        <div class="container">
+          <h2>What I chose not to do</h2>
+          <ul>
+            <li><strong>No Kubernetes:</strong> at this scale, Docker Compose gives me the control I want without adding orchestration complexity.</li>
+            <li><strong>Limited automation:</strong> I automate repeatable setup, but avoid “hands-off” systems that hide failure modes.</li>
+            <li><strong>No managed services:</strong> I keep data and dependencies local so restore and recovery don't depend on external platforms.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NEXT STEPS -->
+      <section class="section-rule">
+        <div class="container">
+          <h2>Next steps</h2>
+          <ul>
             <li>Stricter role separation for sensitive services.</li>
             <li>More aggressive backup verification.</li>
-            <li>Documented recovery procedures for every critical service.</li>
-            </ul>
-        </div>
-        </section>
+            <li>Documented recovery procedures for the critical pieces.</li>
+          </ul>
 
-
-      <footer>
-        <div class="container">
-          v0.1
+          <p class="muted" style="margin-top:14px;">v0.2</p>
         </div>
-      </footer>
+      </section>
     </main>
 
-    <script src="/assets/js/theme.js" defer></script>
+    <div id="site-footer"></div>
+
+    <script src="/assets/js/header.js?v=dev2"></script>
+    <script src="/assets/js/footer.js?v=dev2"></script>
   </body>
 </html>
