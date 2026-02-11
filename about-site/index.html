@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>About This Site - Victor Lelikov</title>
 
-    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2">
-    <link rel="stylesheet" href="/assets/css/about/about.css?v=dev2">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/about/about.css">
 
     <link rel="icon" href="/assets/img/favicons/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
@@ -20,84 +20,118 @@
     <main>
       <section class="about-hero">
         <div class="container">
-          <h1 class="page-title">About this site</h1>
-          <p class="muted">
-            How it's hosted, how traffic reaches it, and future plans.
-          </p>
+          <header class="about-head">
+            <h1 class="page-title">About this site</h1>
+            <p class="muted">How it's hosted, how traffic reaches it, and what's next.</p>
+          </header>
 
-          <div class="cards section-tight">
-            <!-- Hosting -->
-            <div class="card">
+          <div class="cards section-tight about-cards">
+            <!-- HOSTING -->
+            <article class="card about-card">
               <div class="kicker">Hosting</div>
-              <div class="title">Self-hosted homelab</div>
-              <div class="desc">
-                This site runs on <a href="#">my own server</a>. The host is Ubuntu Server running under Proxmox, deployed using Docker Compose.
-              </div>
-            </div>
+              <h2 class="title">Self-hosted homelab</h2>
 
-            <!-- Routing -->
-            <div class="card">
+              <dl class="about-dl">
+                <div class="about-row">
+                  <dt>Platform</dt>
+                  <dd>Proxmox</dd>
+                </div>
+                <div class="about-row">
+                  <dt>Host OS</dt>
+                  <dd>Ubuntu Server</dd>
+                </div>
+                <div class="about-row">
+                  <dt>Deploy</dt>
+                  <dd>Docker Compose</dd>
+                </div>
+              </dl>
+            </article>
+
+            <!-- ROUTING -->
+            <article class="card about-card">
               <div class="kicker">Routing</div>
-              <div class="title">Cloudflare Tunnel > HAProxy</div>
-              <div class="desc">
+              <h2 class="title">Cloudflare Tunnel -> HAProxy</h2>
+
+              <p class="desc">
                 Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.
-                Requests flow: Cloudflare > tunnel > HAProxy > containers.
-                <strong>No inbound ports are exposed to the internet.</strong>
-              </div>
-            </div>
+              </p>
+
+              <dl class="about-dl">
+                <div class="about-row">
+                  <dt>Flow</dt>
+                  <dd>Cloudflare -> tunnel -> HAProxy -> containers</dd>
+                </div>
+                <div class="about-row">
+                  <dt>Inbound ports</dt>
+                  <dd><strong>None exposed to the internet</strong></dd>
+                </div>
+              </dl>
+            </article>
 
             <!-- TLS -->
-            <div class="card">
+            <article class="card about-card">
               <div class="kicker">TLS</div>
-              <div class="title">Terminated at Cloudflare</div>
-              <div class="desc">
-                HTTPS is handled at the Cloudflare edge. Internally, traffic is routed over my private, internal, networks.
-              </div>
-            </div>
+              <h2 class="title">Terminated at Cloudflare</h2>
 
-            <!-- Deploy -->
-            <div class="card">
+              <p class="desc">
+                HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.
+              </p>
+            </article>
+
+            <!-- DEPLOY -->
+            <article class="card about-card">
               <div class="kicker">Deployments</div>
-              <div class="title">Automated Git updates</div>
-              <div class="desc">
-                The repo on GitHub is the source of truth. The server runs an automated <code>git pull</code> on a fixed interval (every 5 minutes) 
-                done as a bash script run using a systemd timer.
-              </div>
+              <h2 class="title">Automated Git updates</h2>
+
+              <dl class="about-dl">
+                <div class="about-row">
+                  <dt>Source of truth</dt>
+                  <dd>GitHub</dd>
+                </div>
+                <div class="about-row">
+                  <dt>Update method</dt>
+                  <dd><code>git pull</code> every 5 minutes, done as a bash script run on a systemd timer</dd>
+                </div>
+              </dl>
 
               <div class="actions">
                 <a class="btn primary" href="/projects/">See projects</a>
               </div>
-            </div>
+            </article>
           </div>
 
           <div class="section">
-            <div class="cards section-tight">
-              <!-- Transparency -->
-              <div class="card">
-                <div class="kicker">Transparency</div>
-                <div class="title">Future Plans</div>
-                <div class="desc">
-                  For now, my plans are to add request logs, uptime monitoring, and analytics/tracking. 
-                  Additionally, I'm going to keep working on my projects, and updating my site to reflect that.
-                </div>
-              </div>
+            <div class="cards section-tight about-cards">
+              <!-- TRANSPARENCY -->
+              <article class="card about-card">
+                <div class="kicker">Future Plans</div>
+                <h2 class="title">What I'll be adding in the future</h2>
+                <ul class="about-list">
+                  <li>Request logging</li>
+                  <li>Uptime monitoring</li>
+                  <li>Analytics / tracking</li>
+                </ul>
+                <p class="desc muted">
+                  I'll also be adding more projects to the site, which will be added to the projects page as they come.
+                </p>
+              </article>
 
-              <!-- Why -->
-              <div class="card">
+              <!-- INTENT -->
+              <article class="card about-card">
                 <div class="kicker">Intent</div>
-                <div class="title">Portfolio + infrastructure demo</div>
-                <div class="desc">
+                <h2 class="title">Portfolio + infrastructure demo</h2>
+                <p class="desc">
                   This is both a portfolio and a live demonstration of the infrastructure I run.
-                  I focused on writing for control, iteration, and security.
-                </div>
-              </div>
+                  Built for control, iteration, and security.
+                </p>
+              </article>
             </div>
           </div>
 
-          <div class="meta">
+          <footer class="meta about-meta">
             <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
             <div><strong>Tracking:</strong> none</div>
-          </div>
+          </footer>
         </div>
       </section>
     </main>

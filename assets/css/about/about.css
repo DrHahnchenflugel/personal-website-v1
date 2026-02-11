@@ -1,30 +1,73 @@
-/* ABOUT THIS SITE PAGE */
+/* ABOUT THIS SITE */
 
-.about-hero .page-title{
-  margin-bottom: 8px;
+.about-head{
+  margin-bottom: 10px;
 }
 
-.about-hero .muted{
-  margin-bottom: 16px;
+.about-head .muted{
   max-width: 75ch;
 }
 
-/* Keep cards feeling slightly less cramped than contact */
-.about-hero .cards{
-  margin-top: 10px;
+.about-cards{
+  /* uses .cards grid from your base; this is just a hook */
 }
 
-/* Improve code readability inside card descriptions */
-.about-hero code{
+.about-card .title{
+  margin-top: 6px;
+}
+
+/* Definition list layout */
+.about-dl{
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.about-row{
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.about-row dt{
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: .02em;
+}
+
+.about-row dd{
+  margin: 0;
+}
+
+/* nice inline code without looking like a screenshot */
+.about-card code{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.95em;
   padding: 0.1em 0.35em;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card), var(--bg) 20%);
+  background: color-mix(in srgb, var(--card), var(--bg) 25%);
 }
 
-/* Meta spacing */
-.about-hero .meta{
+/* “missing right now” list */
+.about-list{
+  margin: 10px 0 0;
+  padding-left: 1.05rem;
+}
+
+.about-list li{
+  margin: 6px 0;
+}
+
+.about-meta{
   margin-top: 18px;
+}
+
+/* mobile: avoid label/value squeeze */
+@media (max-width: 520px){
+  .about-row{
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
 }
