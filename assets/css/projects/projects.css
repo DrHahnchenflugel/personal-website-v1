@@ -47,7 +47,7 @@
 
 .btn-primary{
   border-color: color-mix(in srgb, var(--accent) 65%, var(--border));
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  background: var(--accent);
 }
 
 .callout{
