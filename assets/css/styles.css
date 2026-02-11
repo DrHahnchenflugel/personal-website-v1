@@ -5,6 +5,12 @@
 /* 
    Theme tokens
 */
+:root{
+  --container: 900px;
+  --radius: 16px;
+  --radius-sm: 12px;
+}
+
 :root[data-theme="light"]{
   --bg:#f6f6f7;
   --fg:#111318;
@@ -12,7 +18,7 @@
 
   --card:#ffffff;
   --border:#e5e7eb;
-  --accent:#266ed3;
+  --accent:#356dbb;
 
   --color: #fff;
   --inverse-color: #0e0d0d;
@@ -27,11 +33,6 @@
   --card:#121520;
   --border:#2a2f3a;
   --accent:#d7b46a;
-
-  --container: 900px;
-
-  --radius: 16px;
-  --radius-sm: 12px;
 
   --color: #000;
   --inverse-color: #fff;
