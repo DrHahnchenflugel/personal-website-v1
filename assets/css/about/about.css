@@ -1,0 +1,30 @@
+/* ABOUT THIS SITE PAGE */
+
+.about-hero .page-title{
+  margin-bottom: 8px;
+}
+
+.about-hero .muted{
+  margin-bottom: 16px;
+  max-width: 75ch;
+}
+
+/* Keep cards feeling slightly less cramped than contact */
+.about-hero .cards{
+  margin-top: 10px;
+}
+
+/* Improve code readability inside card descriptions */
+.about-hero code{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em;
+  padding: 0.1em 0.35em;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card), var(--bg) 20%);
+}
+
+/* Meta spacing */
+.about-hero .meta{
+  margin-top: 18px;
+}

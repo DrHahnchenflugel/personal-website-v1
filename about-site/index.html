@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About This Site - Victor Lelikov</title>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/about/about.css?v=dev2">
+
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="about-hero">
+        <div class="container">
+          <h1 class="page-title">About this site</h1>
+          <p class="muted">
+            How it's hosted, how traffic reaches it, and future plans.
+          </p>
+
+          <div class="cards section-tight">
+            <!-- Hosting -->
+            <div class="card">
+              <div class="kicker">Hosting</div>
+              <div class="title">Self-hosted homelab</div>
+              <div class="desc">
+                This site runs on <a href="#">my own server</a>. The host is Ubuntu Server running under Proxmox, deployed using Docker Compose.
+              </div>
+            </div>
+
+            <!-- Routing -->
+            <div class="card">
+              <div class="kicker">Routing</div>
+              <div class="title">Cloudflare Tunnel > HAProxy</div>
+              <div class="desc">
+                Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.
+                Requests flow: Cloudflare > tunnel > HAProxy > containers.
+                <strong>No inbound ports are exposed to the internet.</strong>
+              </div>
+            </div>
+
+            <!-- TLS -->
+            <div class="card">
+              <div class="kicker">TLS</div>
+              <div class="title">Terminated at Cloudflare</div>
+              <div class="desc">
+                HTTPS is handled at the Cloudflare edge. Internally, traffic is routed over my private, internal, networks.
+              </div>
+            </div>
+
+            <!-- Deploy -->
+            <div class="card">
+              <div class="kicker">Deployments</div>
+              <div class="title">Automated Git updates</div>
+              <div class="desc">
+                The repo on GitHub is the source of truth. The server runs an automated <code>git pull</code> on a fixed interval (every 5 minutes) 
+                done as a bash script run using a systemd timer.
+              </div>
+
+              <div class="actions">
+                <a class="btn primary" href="/projects/">See projects</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="cards section-tight">
+              <!-- Transparency -->
+              <div class="card">
+                <div class="kicker">Transparency</div>
+                <div class="title">Future Plans</div>
+                <div class="desc">
+                  For now, my plans are to add request logs, uptime monitoring, and analytics/tracking. 
+                  Additionally, I'm going to keep working on my projects, and updating my site to reflect that.
+                </div>
+              </div>
+
+              <!-- Why -->
+              <div class="card">
+                <div class="kicker">Intent</div>
+                <div class="title">Portfolio + infrastructure demo</div>
+                <div class="desc">
+                  This is both a portfolio and a live demonstration of the infrastructure I run.
+                  I focused on writing for control, iteration, and security.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
+            <div><strong>Tracking:</strong> none</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
