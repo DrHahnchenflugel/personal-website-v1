@@ -1,95 +1,124 @@
-<section class="about">
-  <div class="container about-layout">
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About This Site - Victor Lelikov</title>
 
-    <header class="about-head">
-      <h1 class="page-title">About this site</h1>
-      <p class="muted">How it's hosted, how traffic reaches it, and my future plans.</p>
-    </header>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/about/about.css">
 
-    <aside class="about-nav" aria-label="Page sections">
-      <a href="#hosting">Hosting</a>
-      <a href="#routing">Routing</a>
-      <a href="#tls">TLS</a>
-      <a href="#deploy">Deployments</a>
-      <a href="#future">Future plans</a>
-      <a href="#intent">Intent</a>
-    </aside>
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
 
-    <div class="about-main">
-      <!-- HOSTING -->
-      <article id="hosting" class="about-section">
-        <div class="kicker">Hosting</div>
-        <h2>Self-hosted homelab</h2>
-        <p class="lead">Runs on my own server. Ubuntu Server under Proxmox, deployed with Docker Compose.</p>
+  <body>
+    <div id="site-header"></div>
 
-        <dl class="spec">
-          <div class="row"><dt>Platform</dt><dd>Proxmox</dd></div>
-          <div class="row"><dt>Host OS</dt><dd>Ubuntu Server</dd></div>
-          <div class="row"><dt>Deploy</dt><dd>Docker Compose</dd></div>
-        </dl>
-      </article>
+    <main>
+      <section class="about">
+        <div class="container about-layout">
 
-      <!-- ROUTING -->
-      <article id="routing" class="about-section">
-        <div class="kicker">Routing</div>
-        <h2>Cloudflare Tunnel -> HAProxy</h2>
-        <p class="lead">Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.</p>
+            <header class="about-head">
+            <h1 class="page-title">About this site</h1>
+            <p class="muted">How it’s hosted, how traffic reaches it, and what’s next.</p>
+            </header>
 
-        <dl class="spec">
-          <div class="row"><dt>Flow</dt><dd>Cloudflare -> tunnel -> HAProxy -> containers</dd></div>
-          <div class="row"><dt>Inbound ports</dt><dd><span class="callout">None exposed to the internet</span></dd></div>
-        </dl>
-      </article>
+            <aside class="about-nav" aria-label="Page sections">
+            <a href="#hosting">Hosting</a>
+            <a href="#routing">Routing</a>
+            <a href="#tls">TLS</a>
+            <a href="#deploy">Deployments</a>
+            <a href="#future">Future plans</a>
+            <a href="#intent">Intent</a>
+            </aside>
 
-      <!-- TLS -->
-      <article id="tls" class="about-section">
-        <div class="kicker">TLS</div>
-        <h2>Terminated at Cloudflare</h2>
-        <p class="lead">HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.</p>
-      </article>
+            <div class="about-main">
+            <!-- HOSTING -->
+            <article id="hosting" class="about-section">
+                <div class="kicker">Hosting</div>
+                <h2>Self-hosted homelab</h2>
+                <p class="lead">Runs on my own server. Ubuntu Server under Proxmox, deployed with Docker Compose.</p>
 
-      <!-- DEPLOY -->
-      <article id="deploy" class="about-section">
-        <div class="kicker">Deployments</div>
-        <h2>Automated Git updates</h2>
-        <p class="lead">GitHub is the source of truth. The server pulls updates every 5 minutes via a systemd timer.</p>
+                <dl class="spec">
+                <div class="row"><dt>Platform</dt><dd>Proxmox</dd></div>
+                <div class="row"><dt>Host OS</dt><dd>Ubuntu Server</dd></div>
+                <div class="row"><dt>Deploy</dt><dd>Docker Compose</dd></div>
+                </dl>
+            </article>
 
-        <dl class="spec">
-          <div class="row"><dt>Source of truth</dt><dd>GitHub</dd></div>
-          <div class="row"><dt>Update method</dt><dd><code>git pull</code> every 5 minutes</dd></div>
-        </dl>
+            <!-- ROUTING -->
+            <article id="routing" class="about-section">
+                <div class="kicker">Routing</div>
+                <h2>Cloudflare Tunnel → HAProxy</h2>
+                <p class="lead">Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.</p>
 
-        <div class="actions">
-          <a class="btn primary" href="/projects/">See projects</a>
+                <dl class="spec">
+                <div class="row"><dt>Flow</dt><dd>Cloudflare → tunnel → HAProxy → containers</dd></div>
+                <div class="row"><dt>Inbound ports</dt><dd><span class="callout">None exposed to the internet</span></dd></div>
+                </dl>
+            </article>
+
+            <!-- TLS -->
+            <article id="tls" class="about-section">
+                <div class="kicker">TLS</div>
+                <h2>Terminated at Cloudflare</h2>
+                <p class="lead">HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.</p>
+            </article>
+
+            <!-- DEPLOY -->
+            <article id="deploy" class="about-section">
+                <div class="kicker">Deployments</div>
+                <h2>Automated Git updates</h2>
+                <p class="lead">GitHub is the source of truth. The server pulls updates every 5 minutes via a systemd timer.</p>
+
+                <dl class="spec">
+                <div class="row"><dt>Source of truth</dt><dd>GitHub</dd></div>
+                <div class="row"><dt>Update method</dt><dd><code>git pull</code> every 5 minutes</dd></div>
+                </dl>
+
+                <div class="actions">
+                <a class="btn primary" href="/projects/">See projects</a>
+                </div>
+            </article>
+
+            <!-- FUTURE -->
+            <article id="future" class="about-section">
+                <div class="kicker">Future plans</div>
+                <h2>What I’ll be adding</h2>
+
+                <ul class="bullets">
+                <li>Request logging</li>
+                <li>Uptime monitoring</li>
+                <li>Analytics / tracking</li>
+                </ul>
+
+                <p class="muted">Also: more projects, with writeups as they land.</p>
+            </article>
+
+            <!-- INTENT -->
+            <article id="intent" class="about-section">
+                <div class="kicker">Intent</div>
+                <h2>Portfolio + infrastructure demo</h2>
+                <p class="lead">This is both a portfolio and a live demonstration of the infrastructure I run. Built for control, iteration, and security.</p>
+
+                <div class="meta about-meta">
+                <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
+                <div><strong>Tracking:</strong> none</div>
+                </div>
+            </article>
+
+            </div>
         </div>
-      </article>
+        </section>
+    </main>
 
-      <!-- FUTURE -->
-      <article id="future" class="about-section">
-        <div class="kicker">Future plans</div>
-        <h2>What I'll be adding</h2>
+    <div id="site-footer"></div>
 
-        <ul class="bullets">
-          <li>Request logging</li>
-          <li>Uptime monitoring</li>
-          <li>Analytics / tracking</li>
-        </ul>
-
-        <p class="muted">Also: more projects, with writeups as they land.</p>
-      </article>
-
-      <!-- INTENT -->
-      <article id="intent" class="about-section">
-        <div class="kicker">Intent</div>
-        <h2>Portfolio + infrastructure demo</h2>
-        <p class="lead">This is both a portfolio and a live demonstration of the infrastructure I run. Built for control, iteration, and security.</p>
-
-        <div class="meta about-meta">
-          <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
-          <div><strong>Tracking:</strong> none</div>
-        </div>
-      </article>
-
-    </div>
-  </div>
-</section>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
