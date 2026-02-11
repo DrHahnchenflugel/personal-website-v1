@@ -19,100 +19,100 @@
 
     <main>
       <section class="about">
-        <div class="container about-layout">
+        <div class="container">
 
             <header class="about-head">
             <h1 class="page-title">About this site</h1>
             <p class="muted">How it’s hosted, how traffic reaches it, and what’s next.</p>
             </header>
 
-            <aside class="about-nav" aria-label="Page sections">
-            <a href="#hosting">Hosting</a>
-            <a href="#routing">Routing</a>
-            <a href="#tls">TLS</a>
-            <a href="#deploy">Deployments</a>
-            <a href="#future">Future plans</a>
-            <a href="#intent">Intent</a>
-            </aside>
+            <div class="about-sections">
 
-            <div class="about-main">
-            <!-- HOSTING -->
-            <article id="hosting" class="about-section">
-                <div class="kicker">Hosting</div>
-                <h2>Self-hosted homelab</h2>
-                <p class="lead">Runs on my own server. Ubuntu Server under Proxmox, deployed with Docker Compose.</p>
+            <section class="about-block" id="hosting">
+                <h2 class="about-title">Hosting</h2>
+                <p class="about-subtitle">Self-hosted homelab</p>
 
-                <dl class="spec">
-                <div class="row"><dt>Platform</dt><dd>Proxmox</dd></div>
-                <div class="row"><dt>Host OS</dt><dd>Ubuntu Server</dd></div>
-                <div class="row"><dt>Deploy</dt><dd>Docker Compose</dd></div>
-                </dl>
-            </article>
+                <div class="kv">
+                <div class="kv-row"><span class="kv-k"><strong>Platform:</strong></span> <span class="kv-v">Proxmox</span></div>
+                <div class="kv-row"><span class="kv-k"><strong>Host OS:</strong></span> <span class="kv-v">Ubuntu Server</span></div>
+                <div class="kv-row"><span class="kv-k"><strong>Deploy:</strong></span> <span class="kv-v">Docker Compose</span></div>
+                </div>
+            </section>
 
-            <!-- ROUTING -->
-            <article id="routing" class="about-section">
-                <div class="kicker">Routing</div>
-                <h2>Cloudflare Tunnel → HAProxy</h2>
-                <p class="lead">Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.</p>
+            <section class="about-block" id="routing">
+                <h2 class="about-title">Routing</h2>
+                <p class="about-subtitle">Cloudflare Tunnel → HAProxy</p>
 
-                <dl class="spec">
-                <div class="row"><dt>Flow</dt><dd>Cloudflare → tunnel → HAProxy → containers</dd></div>
-                <div class="row"><dt>Inbound ports</dt><dd><span class="callout">None exposed to the internet</span></dd></div>
-                </dl>
-            </article>
+                <p class="about-text">
+                Public traffic is proxied through Cloudflare and enters via a Cloudflare Tunnel.
+                </p>
 
-            <!-- TLS -->
-            <article id="tls" class="about-section">
-                <div class="kicker">TLS</div>
-                <h2>Terminated at Cloudflare</h2>
-                <p class="lead">HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.</p>
-            </article>
+                <div class="kv">
+                <div class="kv-row"><span class="kv-k"><strong>Flow:</strong></span> <span class="kv-v">Cloudflare → tunnel → HAProxy → containers</span></div>
+                <div class="kv-row">
+                    <span class="kv-k"><strong>Inbound ports:</strong></span>
+                    <span class="kv-v"><span class="pill-strong">None exposed to the internet</span></span>
+                </div>
+                </div>
+            </section>
 
-            <!-- DEPLOY -->
-            <article id="deploy" class="about-section">
-                <div class="kicker">Deployments</div>
-                <h2>Automated Git updates</h2>
-                <p class="lead">GitHub is the source of truth. The server pulls updates every 5 minutes via a systemd timer.</p>
+            <section class="about-block" id="tls">
+                <h2 class="about-title">TLS</h2>
+                <p class="about-subtitle">Terminated at Cloudflare</p>
 
-                <dl class="spec">
-                <div class="row"><dt>Source of truth</dt><dd>GitHub</dd></div>
-                <div class="row"><dt>Update method</dt><dd><code>git pull</code> every 5 minutes</dd></div>
-                </dl>
+                <p class="about-text">
+                HTTPS is handled at the Cloudflare edge. Internally, traffic stays on private networks.
+                </p>
+            </section>
+
+            <section class="about-block" id="deploy">
+                <h2 class="about-title">Deployments</h2>
+                <p class="about-subtitle">Automated Git updates</p>
+
+                <div class="kv">
+                <div class="kv-row"><span class="kv-k"><strong>Source of truth:</strong></span> <span class="kv-v">GitHub</span></div>
+                <div class="kv-row">
+                    <span class="kv-k"><strong>Update method:</strong></span>
+                    <span class="kv-v"><code>git pull</code> every 5 minutes (systemd timer)</span>
+                </div>
+                </div>
 
                 <div class="actions">
                 <a class="btn primary" href="/projects/">See projects</a>
                 </div>
-            </article>
+            </section>
 
-            <!-- FUTURE -->
-            <article id="future" class="about-section">
-                <div class="kicker">Future plans</div>
-                <h2>What I’ll be adding</h2>
+            <section class="about-block" id="future">
+                <h2 class="about-title">Future plans</h2>
+                <p class="about-subtitle">What I’ll be adding</p>
 
-                <ul class="bullets">
+                <ul class="about-list">
                 <li>Request logging</li>
                 <li>Uptime monitoring</li>
                 <li>Analytics / tracking</li>
                 </ul>
 
                 <p class="muted">Also: more projects, with writeups as they land.</p>
-            </article>
+            </section>
 
-            <!-- INTENT -->
-            <article id="intent" class="about-section">
-                <div class="kicker">Intent</div>
-                <h2>Portfolio + infrastructure demo</h2>
-                <p class="lead">This is both a portfolio and a live demonstration of the infrastructure I run. Built for control, iteration, and security.</p>
+            <section class="about-block" id="intent">
+                <h2 class="about-title">Intent</h2>
+                <p class="about-subtitle">Portfolio + infrastructure demo</p>
 
-                <div class="meta about-meta">
+                <p class="about-text">
+                This is both a portfolio and a live demonstration of the infrastructure I run.
+                Built for control, iteration, and security.
+                </p>
+
+                <div class="meta">
                 <div><strong>Stack:</strong> Proxmox • Ubuntu Server • Docker Compose • HAProxy • Cloudflare Tunnel</div>
                 <div><strong>Tracking:</strong> none</div>
                 </div>
-            </article>
+            </section>
 
             </div>
         </div>
-        </section>
+      </section>
     </main>
 
     <div id="site-footer"></div>
