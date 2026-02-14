@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 2 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 3 - IT WORKS! -JTAG Programmer 2</h1>
+          <p class="project-sub muted">
+            Turns out money really does buy happiness!
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">Hardware Setup</span>
+            <span class="pill">JTAG Programmer (Altera USB-Blaster II)</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 14, 2026. 5:30 AM.</p>
+                <h2 class="log-title">Log 3 - IT WORKS! -JTAG Programmer 2</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                <i>This is a quick entry, seeing as I'm yet to sleep. But the blaster works!!!</i><br>
+                I got home from work about 25 minutes ago, and picked up the delivered Blaster II. I plugged it in, opened up Quartus 15, and went straight to
+                the programmer. I was expecting to have to do some driver work, but no, it was recognised right from the start! I tried to run Auto Detect, and 
+                it... failed.<br><br><br>
+                Oh no.<br><br><br>
+                The trauma of the first blaster still fresh in my mind, I went to the terminal.
+                <br>
+                <br>
+                <code>
+                    lsusb
+                </code>
+                <br>
+                <code>
+                    Bus 013 Device 022: ID 09fb:6001 Altera Blaster
+                </code>
+                <br>
+                <br>
+                Okay, the blaster isn't some cheap chinese knockoff. Biggup Waveshare.
+                <br><br>
+                <code>
+                    /opt/altera_lite/15.1/quartus/bin/jtagconfig
+                </code>
+                <br>
+                <code>
+                    1) USB-Blaster variant [13-4.2]<br>
+                        Unable to lock chain - Insufficient port permissions
+                </code>
+                <br><br>
+                Oh, is that it? I hope so. I killed any existing jtag daemon processes, and deleted the common lock files that might exist:
+                <br><br>
+                <code>
+                    sudo pkill jtagd<br>
+                    sudo pkill quartus_jtagd<br>
+                    sudo rm -f /var/lock/jtagd* /var/lock/usbblaster* /tmp/jtagd* /tmp/usbblaster* 2>/dev/null <i> Just to cover all my basis</i>
+                </code>
+                <br><br>
+                Moment of truth. 
+                <br><br>
+                <code>
+                    sudo /opt/altera_lite/15.1/quartus/bin/jtagconfig
+                </code>
+                <br><br>
+                .<br>
+                .<br>
+                .<br>
+                <br><br>
+                <code>
+                    1) USB-Blaster [13-4.2] <br>
+                      020F10DD   EP3C(10|5)/EP4CE(10|6)
+                </code>
+                <br><br>
+                LETS. F---ING. GO.<br>
+                I went to the programmer to confirm:<br>
+                <img src="/assets/img/projects/fpga_doohickey/programmer_working.png"><br>
+                Celebrations were had. More celebrations than I care to admit.<br>
+                Turns out, dropping 40 bucks + shipping on a programmer that actually works is 100% worth your sanity. 10/10, completely and thoroughly recommend
+                the experience. OK, I can go rest in peace now. Much good will come of this project, I can already feel it.<br>
+                Oh, and happy Valentine's Day to those who celebrate!
+            </p>
+          </article>
+          *I first installed the latest version, but quickly found out that the USB-Blaster I clone I had only worked with versions up to 15.1.
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
