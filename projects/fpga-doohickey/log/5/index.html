@@ -57,15 +57,15 @@
                 This is equivalent to the following code on Arduino:
                 <br>
                 <pre><code>
-                    void setup() {
-                        pinMode(LED_BUILTIN, OUTPUT);
-                    }
-                    void loop() {
-                        digitalWrite(LED_BUILTIN, HIGH);
-                        delay(1000);
-                        digitalWrite(LED_BUILTIN, LOW);
-                        delay(1000);
-                    }
+void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(1000);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(1000);
+}
                 </code></pre>
                 <br>
                 <i>There would also be a reset state that's needed, that classical Arduino coding doesn't support.</i>
@@ -87,43 +87,43 @@
                 Here's the SystemVerilog code I wrote for this, with all the documentation for each part of the code:
                 <br>
                 <pre><code>
-                    // LED Blinking module
-                    
-                    module blinkLED ( //define signals for blinkLED (Inputs & Outputs)
-                        input  logic clk,		// clock input
-                        input  logic rst_n,    // active LO reset input
-                        output logic led			// LED output
-                    ); 
-                    
-                    // 50 MHz clock speed -> 25,000,000 cycles = 0.5 sec blink rate
-                    localparam int MAX_COUNT = 25_000_000;
-                    
-                    // Create a logic vector called 'counter'
-                    // the width is equal to the ceiling of log base 2 of N-1
-                    // which is the way of determining the number of bits to store MAX_COUNT
-                    logic [$clog2(MAX_COUNT)-1:0] counter;
-                    
-                    // Create a flip-flop that updates on the rising edge of CLK or falling edge of RST_N
-                    always_ff @(posedge clk or negedge rst_n) begin
-                        // if reset is LO, reset the state
-                        if (!rst_n) begin
-                            counter <= 0;
-                            led     <= 0;
-                        end
-                        // else, (reset is HI), run normal operation
-                        else begin
-                            // If the counter reaches the max state, then
-                            if (counter == MAX_COUNT - 1) begin
-                                counter <= 0;			 // reset counter, and
-                                led     <= ~led;      // toggle LED
-                            end
-                            // If the counter has not reached the max state, increment it
-                            else begin
-                                counter <= counter + 1;
-                            end
-                        end
-                    end
-                    endmodule // end of blinkLED module
+// LED Blinking module
+
+module blinkLED ( //define signals for blinkLED (Inputs & Outputs)
+    input  logic clk,		// clock input
+    input  logic rst_n,    // active LO reset input
+    output logic led			// LED output
+); 
+
+// 50 MHz clock speed -> 25,000,000 cycles = 0.5 sec blink rate
+localparam int MAX_COUNT = 25_000_000;
+
+// Create a logic vector called 'counter'
+// the width is equal to the ceiling of log base 2 of N-1
+// which is the way of determining the number of bits to store MAX_COUNT
+logic [$clog2(MAX_COUNT)-1:0] counter;
+
+// Create a flip-flop that updates on the rising edge of CLK or falling edge of RST_N
+always_ff @(posedge clk or negedge rst_n) begin
+    // if reset is LO, reset the state
+    if (!rst_n) begin
+        counter <= 0;
+        led     <= 0;
+    end
+    // else, (reset is HI), run normal operation
+    else begin
+        // If the counter reaches the max state, then
+        if (counter == MAX_COUNT - 1) begin
+            counter <= 0;			 // reset counter, and
+            led     <= ~led;      // toggle LED
+        end
+        // If the counter has not reached the max state, increment it
+        else begin
+            counter <= counter + 1;
+        end
+    end
+end
+endmodule // end of blinkLED module
                 </code></pre>
                 <br>
                 <br>
