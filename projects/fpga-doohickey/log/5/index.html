@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 5 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 5 - Blinking LED</h1>
+          <p class="project-sub muted">
+            The Hello, World of hardware development.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">SystemVerilog</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 16, 2026. 4:30 PM.</p>
+                <h2 class="log-title">Log 5 - Blinking LED</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                <strong>Let's start with the basics - an LED blinker for a dev board with a built-in LED.</strong>
+                <br>
+                This is equivalent to the following code on Arduino:
+                <br>
+                <code>
+                    void setup() {
+                        pinMode(LED_BUILTIN, OUTPUT);
+                    }
+                    void loop() {
+                        digitalWrite(LED_BUILTIN, HIGH);
+                        delay(1000);
+                        digitalWrite(LED_BUILTIN, LOW);
+                        delay(1000);
+                    }
+                </code>
+                <i>There would also be a reset state that's needed, that classical Arduino coding doesn't support.</i>
+                <br>
+                <br>
+                There are a few things to do here:
+                <br>
+                <ul>
+                    <li>Write SystemVerilog code equivalent to the Arduino code above.</li>
+                    <li>Figure out where the LED and clock are on the FPGA board.</li>
+                    <li>Update the <i>assignment editor</i> with those pins. </li>
+                    <li>Compile the SV file and bug-test it until it compiles</li>
+                    <li>Flash the compiled bitstream to the FPGA board</li>
+                    <li>Fix the code until it blinks the LED on the FPGA board</li>
+                </ul>
+                <br>
+                <br>
+                <h4>SystemVerilog Code</h4>
+                Here's the SystemVerilog code I wrote for this, with all the documentation for each part of the code:
+                <br>
+                <code>
+                    // LED Blinking module
+
+                    module blinkLED ( //define signals for blinkLED (Inputs & Outputs)
+                        input  logic clk,		// clock input
+                        input  logic rst_n,    // active LO reset input
+                        output logic led			// LED output
+                    ); 
+
+                    // 50 MHz clock speed -> 25,000,000 cycles = 0.5 sec blink rate
+                    localparam int MAX_COUNT = 25_000_000;
+
+                    // Create a logic vector called 'counter'
+                    // the width is equal to the ceiling of log base 2 of N-1
+                    // which is the way of determining the number of bits to store MAX_COUNT
+                    logic [$clog2(MAX_COUNT)-1:0] counter;
+
+                    // Create a flip-flop that updates on the rising edge of CLK or falling edge of RST_N
+                    always_ff @(posedge clk or negedge rst_n) begin
+                        // if reset is LO, reset the state
+                        if (!rst_n) begin
+                            counter <= 0;
+                            led     <= 0;
+                        end
+                        // else, (reset is HI), run normal operation
+                        else begin
+                            // If the counter reaches the max state, then
+                            if (counter == MAX_COUNT - 1) begin
+                                counter <= 0;			 // reset counter, and
+                                led     <= ~led;      // toggle LED
+                            end
+                            // If the counter has not reached the max state, increment it
+                            else begin
+                                counter <= counter + 1;
+                            end
+                        end
+                    end
+                    endmodule // end of blinkLED module
+                </code>
+                <br>
+                <br>
+                <h4>Pins</h4>
+                Luckily, the FPGA dev board I bought had all the relevent pins labelled on the silkscreen. 
+                I found the LED, CLK, and BTN pins, and updated the pin assignments.
+                The board has 5 LEDs on pins 1,2,3,7, and 11. The 50Mhz clock is on pins 24 & 25, and the 4 buttons 
+                on this board are on pins 73, 80, 89, and 114.
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/assignment_editor_blinkLED.png" alt="Pin assignment editor with the relevant pins highlighted">
+                <br>
+                <br>
+                <h4>Compilation</h4>
+                I had to add the SystemVerilog file to the project, and then compile it. 
+                <strong>Ctrl+L</strong> to build the project, and fix the few errors that came up.
+                <h4>Programming</h4>
+                Now, I just program the FPGA. The device could be found under Tools -> Programmer.
+                From there, I pressed "Auto-Detect" and it found my FPGA board, where I had to select the correct board type:
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/select_device.png" alt="Device selection menu with the correct FPGA board highlighted">
+                <br>
+                Selecting my board, I then had to select the .sof file that was generated from the compilation step, and then hit "Start" to program the FPGA.
+                <br>
+                <h4>Results</h4>
+                The LED on the FPGA board started blinking! It was very exciting, and a great first step towards the rest of the project.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
