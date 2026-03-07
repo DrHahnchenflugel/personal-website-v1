@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 6 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 6 - On I2C</h1>
+          <p class="project-sub muted">
+            Planning an I2C driver.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">SystemVerilog</span>
+            <span class="pill">I2C</span>
+            <span class="pill">Logic Analyzer</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">March 5, 2026. 8:00 PM.</p>
+                <h2 class="log-title">Log 6 - On I2C</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                I bought a 0.096" OLED display from Amazon for around $15. It has a resolution of 128x64 pixels and uses the SSD1306 controller, which, I hear, is very common for small OLED displays.
+                It has 4 pins - VCC, GND, SCL, and SDA. The first two are for power, and the last two are for I2C communication.
+                <br>
+                I2C is a communication protocol using a serial data line (SDA) and a serial clock line (SCL). The protocol is master-slave, meaning that a master device (or multiple masters) can control
+                multiple slave devices on the same bus. Each device has a unique 7- or 10-bit address, and the master can communicate with any slave through said address sent through the serial data line. I2C is a 
+                very common, simple, and economical protocol to implement.
+                <br>
+                I'm going to write a simple I2C driver for the FPGA to communicate with the OLED display.
+                <br>
+                I took a course on microprocessors in my 5th semester of uni, and I remember we learned about a few protocols, including I2C and SPI. A quick review of the course material, as well as some 
+                online resources, <a href="https://www.ti.com/lit/an/sbaa565/sbaa565.pdf?ts=1772705990780">including from ti.com</a>, reminded me of the basics of I2C, as well as the timing requirements and 
+                the general structure of the protocol.
+                <br>
+                Here's the gist:
+                <ul>
+                    <li>The SDA line is <strong>floating high</strong> and <strong>driven low</strong>. That is, it's typically at the VDD level when not being driven, and is pulled down to GND when a bit is sent.</li>
+                    <li>Like many other digital protocols, I2C uses 0 and 1 to represent the logic levels. A 0 is represented by the SDA line being pulled low, and a 1 is represented by the SDA line being floating high. 
+                        Zeros and ones are received when SCL is puled. For a bit to be valid, SDA must be steady-state between the rising and falling edges of SCL. Figure 3-2, from the linked TI document, shows a representation of the I2C 1 and 0 bits.</li>
+                </ul>
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log6/fig3-2.png" alt="I2C Timing Diagram" class="log-image">
+                <br>
+                <ul>
+                    <li>Communication is two-way. Both the master and slave devices send and receive data. The master can send instructions to the slave, whether it be data or control information.
+                        When the master wants to send data to the slave, the slave has to acknowledge the reception of the data, so the master knows the data was received correctly.</li> 
+                    <li>Additionally, the slave device can send data to the master, typically as a response to a request from the master. In this case, the master has to acknowledge the reception of the data, 
+                        so the slave knows the data was received correctly.</li>
+                    <li>Any data is sent in a specific format. You begin with a <strong>start condition</strong>, followed by the <strong>address</strong> of the target device. Then, you send the <strong>read/write bit</strong>, 
+                        which dictates whether the master is reading from or writing to the slave. After that, the first <strong>ACK<i>(nowledge)</i> bit</strong> is sent by the slave, to confirm it heard the 
+                        command and is ready to send/recv. After that, all the data is sent in a similar format: 8 data bits, followed by an <strong>ACK</strong> bit. Finally, once all the communication is complete, a <strong>stop condition</strong> 
+                        is sent by the master to indicate completion. </li>
+                    <li>I've attached an image from my notes showing the general format of 2 types of I2C communication - a write and a read operation:</li>
+                </ul>
+                TODO
+                <br>
+                So, we need to start by implementing the START (S) condition. The S condition is achieved when the SCL line <i>stays</i> HI, and the SDA line <i>transitions</i> from HI to LO. This initialises the I2C bus.
+                <br>
+                TODO: Image
+                <br>
+                We also need to implement a STOP (P) condition. The P condition is achieved when the SCL line <i>stays</i> HI, and the SDA line <i>transitions</i> from LO to HI. This indicates the end of the I2C communication.
+                <br>
+                TODO: Image
+                <br> 
+                Thirdly, we need to implement the data bits. Each data bit is sent when SCL is pulsed. For a bit to be valid, SDA must be steady-state between the rising and falling edges of SCL.
+                <br>
+                TODO: Image
+                <br>
+                In theory, if we implement all these conditions correctly, we should be able to send the following sequence to the OLED display:
+                <ul>
+                    <li>START condition</li>
+                    <li>Address of the OLED display</li>
+                </ul>
+                and receive an ACK bit from the display, indicating that it is ready to receive data, which we can observe either with our FPGA, or with the handy dandy logic analyser that I bought off Aliexpress for this exact purpose.
+                TODO: finish this log entry once my mouse works again, I've been using my keyboard's numpad as a mouse for the past 2 days and it is certainly an experience. On the flip side, long live manjaro for even letting me use my numpad as a mouse in the first place? 
+            </p> 
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>

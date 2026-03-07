@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 6 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 6 - I2C OLED Part 1</h1>
+          <p class="project-sub muted">
+            Writing a driver for an I2C OLED display.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">SystemVerilog</span>
+            <span class="pill">I2C</span>
+            <span class="pill">Logic Analyzer</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 17, 2026. 00:15 AM.</p>
+                <h2 class="log-title">Log 7 - I2C OLED Part 2</h2>
+                <br>
+                In the previous log, I got a simple I2C driver working and was able to confirm that the display acknowledged its address. 
+                This is a great sign, as it means my driver is working and I can move on to sending actual commands to the display. 
+                Having confirmed that the display is responding to I2C signals, I can now make a more complicated driver that sends specific commands and data.
+                <br>
+                STUFF GOES HERE
+                <br>
+                And here's the resulting waveform set. All 164 pulses worth.
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave1.png"> 
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave2.png">
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave3.png">
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave4.png">
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave5.png">
+                <br>
+                <img src="/assets/img/projects/fpga_doohickey/log7/wave6.png">
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
+
