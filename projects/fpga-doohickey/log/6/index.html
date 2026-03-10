@@ -213,29 +213,29 @@
               It's best practice, in my experience, to strictly define the responsibilities of each layer to keep them as separate and reusable as possible.
   
               <br>
-              <h2>[L1] Bit Engine</h2><br>
+              <h2>[L1] Bit Engine</h2>
               <i>i2c_bit_engine</i>
               This is the lowest-level timed line driver. It should receive commands like 'drive SDA LO', 'release SCL', 'sample SDA', etc. It should also wait for a shared <i>tick</i> to occur,
               and step through these tiny timing phases. It's dumb and reusable, and doesn't know anything about anything WRT addresses, bytes, or transactions. It's no more than a simple tool for higher levels to use.
   
               <br>
-              <h2>[L2] Byte Engine</h2><br>
+              <h2>[L2] Byte Engine</h2>
               <i>i2c_byte_engine</i>
               This is the next level up, and where START/STOP/WRITE_BIT/READ_BIT should live. This module should generate the S/P primitive states, be able to write and read bits using the <i>i2c_bit_engine</i>. 
               It should also be able to take in a byte and write it out bit by bit, and read in a byte bit by bit and return it. Finally, it should be able to handle the ACK bit.
 
               <br>
-              <h2>[L2] Tick Generator</h2><br>
+              <h2>[L2] Tick Generator</h2>
               <i>i2c_tick_generator</i>
               This module generates the timing ticks for the I2C protocol. It should be able to run at a configurable speed, and generate a tick at the appropriate intervals. The <i>i2c_bit_engine</i> will use this tick to step through its timing phases.
 
               <br>
-              <h2>[L3] I2C Master</h2><br>
+              <h2>[L3] I2C Master</h2>
               <i>i2c_master</i>
               This is the highest level of the driver, and should know how to structure transactions. It takes in a transaction <i>intent</i>, and commands the <i>i2c_byte_engine</i> based on that.
 
               <br>
-              <h2>[L4] Top Level Program</h2><br>
+              <h2>[L4] Top Level Program</h2>
               <i>top</i>
               This is the top level of the design, and should run the entire program. It decides what to do and when, and commands the <i>i2c_master</i> to execute transactions based on that. For this first test, the program should just run one transaction to send the OLED address and read back the ACK, then stop.
             </p>     
@@ -343,15 +343,376 @@ end
 endmodule
 </code></pre>
 <br><br>
+              <h2>Pin Assignments</h2><br>
               I set the <i>tick_test_top.sv</i> as the top_level entity, and synthesized it to confirm no errors. Then, I added some pin assignments to connect the tick output to both the LED and the SCL-connected pin to the FPGA.
               <br>
               <img src="/assets/img/projects/fpga_doohickey/log6/pinout_1.png" alt="Pinout Diagram" class="log-image">
               <br>
+              <h2>Result</h2><br>
               I then ran the test on the FPGA, and visually observed the LED blinking at a steady rate, which was a good sign. I also opened my logic analyzer software, and confirmed that the SCL line (CH1) had a square 
               waveform with a frequency of 2 Hz - this means the 'tick' would pulse at a rate of 1 Hz. Excellent!
               <br>
               <img src = "/assets/img/projects/fpga_doohickey/log6/analyser_1.png" alt="Logic Analyzer Screenshot" class="log-image">
               <br>
+
+            <br><br>
+            <h1>SV L1 Bit Engine Implementation</h1>
+            <p>
+              With the tick generator working, I moved onto the L1 Bit Engine. This is the lowest-level timed line driver. It does not know anything about bytes, or transactions, or anything of the sort. It should only know how to
+              perform a single timed bus micro-step on SDA/SCL. It's job is basically:
+              <ul>
+                <li>Drive SDA low or high (release)</li>
+                <li>Drive SCL low or high (release)</li>
+                <li>Sample SDA</li>
+                <li>Wait for a tick from the tick generator</li>
+                <li>Say "done"</li>
+              </ul> 
+            </p>
+
+            The code for this was a bit more involved, so I'll start by showing the FSM structure I ended up with. I made 2 files for this:
+            <br><br>
+              <code>/rtl/i2c/i2c_bit_engine.sv</code>
+              <br>
+              <code>/hw_tests/i2c/bit_engine_test.sv</code>
+              <br><br>
+              The bit generator structure is pretty straightforward:
+              <img src="" alt="Bit Engine FSM Diagram TODO, ADD FROM NOTES" class="log-image">
+              <br>
+              The file I made for the bit engine generator is below:
+              <br><code>i2c_bit_generator.sv</code>
+              <br>
+<pre><code>
+module i2c_bit_engine (
+    input  logic clk,		// System CLK
+    input  logic rst_n,		// Active-LO RST
+    input  logic tick,		// Timing EN pulse from the tick generator
+
+    input  logic cmd_valid,	// Requests telling the bit engine what to do during the next step. cmd_valid means 'start executing the requested bus step'
+    input  logic sda_drive_low_req, // request to pull SDA LO
+    input  logic scl_drive_low_req,	// request to pull SCL LO
+    input  logic sample_req,	// request to capture the value of SDA during this step
+
+    output logic busy,	// bit engine currently executing a step. busy = 1 => ignore new cmd_valid. busy = 0 => ready for next cmd.
+    output logic done,	// '1' means the requested step has completed
+    output logic sda_sample, // stores the sampled SDA value if sample_req was asserted
+
+    inout  wire SDA,	// Physical SDA wire
+    inout  wire SCL	// Physical SCL wire
+);
+
+	/*
+		Sample interaction:
+	byte_engine sets:
+	 - sda_drive_low_req
+	 - scl_drive_low_req
+	 - sample_req
+	 - cmd_valid
+
+	 bit_engine then:
+	 - latches requests
+	 - waits for tick
+	 - performs action
+	 - optionally samples SDA
+	 - pulses done
+	*/
+
+	// Drive controls for the bus that directly control the open-drain outputs.
+	logic sda_drive_low;
+	logic scl_drive_low;
+
+	// Commanded state from the byte engine. Latched to keep request until tick arrives
+	logic sda_drive_low_latched;
+	logic scl_drive_low_latched;
+	logic sample_req_latched;
+    
+	// Electrical state of the bus 
+   wire sda_in;
+   wire scl_in;
+	
+	// state_type ENUM
+	typedef enum logic [1:0] {
+        ST_IDLE,
+        ST_WAIT_TICK,
+        ST_DONE
+   } state_t;
+   state_t state;
+
+	// set SDA and SCL wires to driver states
+   assign SDA = sda_drive_low ? 1'b0 : 1'bz;
+   assign SCL = scl_drive_low ? 1'b0 : 1'bz;
+
+	// set sda and scl input to the SDA and SCL wires
+   assign sda_in = SDA;
+   assign scl_in = SCL;
+
+	// main program
+	always_ff @(posedge clk or negedge rst_n) begin
+		// Active LO Reset
+		if (!rst_n) begin
+			state                  <= ST_IDLE;
+         busy                   <= 1'b0;
+         done                   <= 1'b0;
+         sda_sample             <= 1'b1;
+
+         sda_drive_low          <= 1'b0;
+         scl_drive_low          <= 1'b0;
+
+         sda_drive_low_latched  <= 1'b0;
+         scl_drive_low_latched  <= 1'b0;
+         sample_req_latched     <= 1'b0;
+		end
+		
+		// Nominal operations
+      else begin
+			// set done to 0
+			done <= 1'b0;
+			
+			// FSM
+         case (state)
+				// IDLE State
+				ST_IDLE: 
+				begin
+					busy <= 1'b0;
+
+					if (cmd_valid) begin
+						sda_drive_low_latched <= sda_drive_low_req;
+						scl_drive_low_latched <= scl_drive_low_req;
+						sample_req_latched    <= sample_req;
+
+						sda_drive_low         <= sda_drive_low_req;
+						scl_drive_low         <= scl_drive_low_req;
+
+						busy                  <= 1'b1;
+						state                 <= ST_WAIT_TICK;
+					end
+				end
+
+				// WAIT_TICK State
+				ST_WAIT_TICK: 
+				begin
+					busy <= 1'b1;
+
+					if (tick) begin
+						if (sample_req_latched) begin
+							sda_sample <= sda_in;
+						end
+
+						state <= ST_DONE;
+					end
+				end
+	
+				// DONE State
+				ST_DONE: 
+				begin
+					busy  <= 1'b0;
+					done  <= 1'b1;
+					state <= ST_IDLE;
+				end
+				
+				// default state = IDLE
+				default: 
+				begin
+					state <= ST_IDLE;
+				end
+			endcase
+		end
+    end
+endmodule
+</code></pre>
+<br><br>
+              To test the bit generator, I had to test 4 states:
+              <ul>
+                <li>Release SDA, SCL</li>
+                <li>SDA LO, SCL HI</li>
+                <li>SDA LO, SCL LO</li>
+                <li>SDA HI, SCL LO</li>
+              </ul>
+              <br><code>tick_test_top.sv</code><br>
+<pre><code>
+module bit_engine_test #( // constant params
+    parameter int unsigned CLK_HZ  = 50_000_000,
+    parameter int unsigned TICK_HZ = 2
+)( // IO Ports
+    input  logic clk,		// CLK
+    input  logic rst_n,		// Active-LO RST
+
+    inout  wire OLED_SDA,	// OLED SDA pin
+    inout  wire OLED_SCL,	// OLED SCL pin
+
+    output logic LED_BUSY, // Busy LED
+    output logic LED_DONE	// Done LED
+);
+
+	// tick variable
+	logic tick;
+
+	// states for bit engine
+   logic cmd_valid;
+   logic sda_drive_low_req;
+   logic scl_drive_low_req;
+   logic sample_req;
+
+	// states from bit engine
+   logic busy;
+   logic done;
+   logic sda_sample;
+
+	// test_state_type ENUMs
+   typedef enum logic [2:0] {
+		ST_CMD0,
+      ST_WAIT0,
+      ST_CMD1,
+      ST_WAIT1,
+      ST_CMD2,
+      ST_WAIT2,
+      ST_CMD3,
+      ST_WAIT3
+	} test_state_t;
+   test_state_t state;
+
+	// initialize I2C tick generator
+   i2c_tick_generator #(
+		.CLK_HZ (CLK_HZ),
+      .TICK_HZ(TICK_HZ)
+	) u_tick_gen (
+		.clk  (clk),
+		.rst_n(rst_n),
+		.tick (tick)
+	);
+	
+	// initialize I2C bit engine
+	i2c_bit_engine u_bit_engine (
+		.clk               (clk),
+		.rst_n             (rst_n),
+      .tick              (tick),
+      .cmd_valid         (cmd_valid),
+      .sda_drive_low_req (sda_drive_low_req),
+      .scl_drive_low_req (scl_drive_low_req),
+      .sample_req        (sample_req),
+      .busy              (busy),
+      .done              (done),
+      .sda_sample        (sda_sample),
+      .SDA               (OLED_SDA),
+      .SCL               (OLED_SCL)
+	);
+	
+	// Regular operations
+	always_ff @(posedge clk or negedge rst_n) 
+	begin
+		// Active LO RST
+		if (!rst_n) begin
+			state              <= ST_CMD0;
+         cmd_valid          <= 1'b0;
+         sda_drive_low_req  <= 1'b0;
+         scl_drive_low_req  <= 1'b0;
+         sample_req         <= 1'b0;
+		end
+		// Nominal operations
+		else begin
+			// set valid CMD to 0
+			cmd_valid <= 1'b0;
+
+			// FSM for states
+         case (state)
+				// State 0: release SDA, release SCL
+            ST_CMD0: 
+				begin
+					if (!busy) begin
+						sda_drive_low_req <= 1'b0;
+						scl_drive_low_req <= 1'b0;
+						sample_req        <= 1'b0;
+						cmd_valid         <= 1'b1;
+						state             <= ST_WAIT0;
+					end
+				end
+				
+				ST_WAIT0: 
+				begin
+					if (done)
+						state <= ST_CMD1;
+				end
+					
+				// State 1: drive SDA low, keep SCL released
+				ST_CMD1: 
+				begin
+					if (!busy) begin
+						sda_drive_low_req <= 1'b1;
+						scl_drive_low_req <= 1'b0;
+                  sample_req        <= 1'b0;
+                  cmd_valid         <= 1'b1;
+                  state             <= ST_WAIT1;
+					end
+				end
+				
+				ST_WAIT1: 
+				begin
+					if (done)
+						state <= ST_CMD2;
+				end
+				
+				// State 2: keep SDA low, drive SCL low
+				ST_CMD2: 
+				begin
+					if (!busy) begin
+						sda_drive_low_req <= 1'b1;
+                  scl_drive_low_req <= 1'b1;
+                  sample_req        <= 1'b0;
+                  cmd_valid         <= 1'b1;
+                  state             <= ST_WAIT2;
+					end
+				end
+				
+				ST_WAIT2: 
+				begin
+					if (done)
+						state <= ST_CMD3;
+				end
+				
+				// State 3: release SDA, keep SCL low
+				ST_CMD3: 
+				begin
+					if (!busy) begin
+						sda_drive_low_req <= 1'b0;
+						scl_drive_low_req <= 1'b1;
+                  sample_req        <= 1'b0;
+                  cmd_valid         <= 1'b1;
+                  state             <= ST_WAIT3;
+					end
+				end
+				
+				ST_WAIT3: 
+				begin
+					if (done)
+						state <= ST_CMD0;
+				end
+				
+				// Default state = ST_CMD0 (State 0)
+				default: 
+				begin
+					state <= ST_CMD0;
+				end
+			endcase
+		end
+	end
+	
+	// set BUSY and DONE LEDs to busy and done signals.
+	assign LED_BUSY = busy;
+	assign LED_DONE = done;
+endmodule
+</code></pre>
+            <h2>Pin Assignments</h2><br>
+              I set the <i>bit_engine_test.sv</i> as the top_level entity, and synthesized it to confirm no errors. Then, I added some pin assignments to connect the tick output to both the LED and the SCL-connected pin to the FPGA.
+              <br>
+              <img src="/assets/img/projects/fpga_doohickey/log6/pinout_2.png" alt="Pinout Diagram" class="log-image">
+              <br>
+              <h2>Result</h2><br>
+              Let's take a look at the waveform output from the logic analyzer when I ran this test. The channels are as follows:
+            <ul>
+              <li>CH1 (D0): SCL</li>
+              <li>CH3 (D2): SDA</li>
+            </ul>
+            <img src="/assets/img/projects/fpga_doohickey/log6/analyser_2.png" alt="Logic Analyzer Screenshot 2" class="log-image">
+
             </p>
           </article>
         </div>
