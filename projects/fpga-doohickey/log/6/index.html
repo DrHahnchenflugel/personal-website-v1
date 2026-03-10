@@ -292,6 +292,57 @@ module i2c_tick_generator #( // constant params
 	
 endmodule
 </code></pre>
+<br><br>
+              The tick generator tester was also pretty simple:
+              <br><code>tick_test_top.sv</code>
+              <br><br>
+<pre><code>
+module tick_test_top #(	// Constant params
+    parameter int unsigned CLK_HZ  = 50_000_000, // dictated by FPGA datasheet
+    parameter int unsigned TICK_HZ = 1	// slowed down for debugging
+)( // IO Ports
+    input  logic clk,
+    input  logic rst_n,
+    output logic LED,
+	 output logic OLED_SCL
+);
+
+logic tick;
+
+// Instantiate I2C Tick Generator
+i2c_tick_generator #(
+    .CLK_HZ(CLK_HZ),
+    .TICK_HZ(TICK_HZ)
+) tick_gen (
+    .clk   (clk),
+    .rst_n (rst_n),
+    .tick  (tick)
+);
+
+// OLED_SCL signal is the same as tick.
+assign OLED_SCL = LED;
+
+// Test tick generator
+always_ff @(posedge clk or negedge rst_n)
+begin
+    if (!rst_n)
+        LED <= 0;
+    else if (tick)
+        LED <= ~LED;
+end
+
+endmodule
+</code></pre>
+<br><br>
+              I set the <i>tick_test_top.sv</i> as the top_level entity, and synthesized it to confirm no errors. Then, I added some pin assignments to connect the tick output to both the LED and the SCL-connected pin to the FPGA.
+              <br>
+              <img src="/assets/img/projects/fpga_doohickey/log6/pinout_1.png" alt="Pinout Diagram" class="log-image">
+              <br>
+              I then ran the test on the FPGA, and visually observed the LED blinking at a steady rate, which was a good sign. I also opened my logic analyzer software, and confirmed that the SCL line (CH1) had a square 
+              waveform with a frequency of 2 Hz - this means the 'tick' would pulse at a rate of 1 Hz. Excellent!
+              <br>
+              <img src = "/assets/img/projects/fpga_doohickey/log6/analyser_1.png" alt="Logic Analyzer Screenshot" class="log-image">
+              <br>
             </p>
           </article>
         </div>
