@@ -70,12 +70,12 @@
             </p>
 
             <p>
-              Before touching any HDL, I wanted to quickly review how I2C actually works. I had seen it before in a microprocessors course, but not in enough detail to sit down and implement it from scratch in FPGA logic without checking a few things first. I also skimmed some online references, including a helpful document from
-              <a href="https://www.ti.com/lit/an/sbaa565/sbaa565.pdf?ts=1772705990780">TI</a>,
+              Before touching any HDL, I wanted to quickly review how I2C actually works. I had seen it before in a microprocessors course, but not in enough detail to sit down and implement it from scratch in FPGA logic without checking a few things first. I also skimmed some online references, including 
+              <a href="https://www.ti.com/lit/an/sbaa565/sbaa565.pdf?ts=1772705990780">a helpful document from TI</a>,
               mainly to refresh the timing rules.
             </p>
 
-            <h3>I2C Basics</h3>
+            <h1>I2C Basics</h1>
 
             <p>
               I2C is a simple two-wire serial communication protocol. One device on the bus acts as the <strong>master</strong> and controls the communication, while the other devices are <strong>slaves</strong>. Each slave has an address, and the master selects which device it wants to talk to by sending that address over the bus.
@@ -100,6 +100,9 @@
 
             <img src="/assets/img/projects/fpga_doohickey/log6/fig3-2.png" alt="I2C Timing Diagram" class="log-image">
 
+            <br>
+            <br>
+            <h2>Transactions</h2>
             <p>
               At a higher level, communication on the bus is framed by two special conditions: <strong>START</strong> and <strong>STOP</strong>.
             </p>
@@ -125,6 +128,7 @@
               Data itself is sent in 8-bit chunks. After each byte, there is a ninth clock pulse used for an <strong>ACK</strong> bit. The receiving device pulls SDA low during that bit time to acknowledge that it successfully received the byte.
             </p>
 
+            <h3>WRITE Transaction</h3>
             <p>
               A typical write transaction looks roughly like this:
             </p>
@@ -139,6 +143,7 @@
               <li>STOP condition</li>
             </ul>
 
+            <h3>READ Transaction</h3>
             <p>
               A read transaction follows the same general pattern, except that after the address phase the slave drives the data line and the master acknowledges the received bytes.
             </p>
@@ -165,6 +170,7 @@
               That sounds simple enough on paper, but in HDL it is a bit different from writing software for a microcontroller. On a microcontroller, you might imagine having separate functions for "start", "stop", "send bit", and "read ACK", and just calling them one after another. In FPGA logic, that behaviour has to be built explicitly over time, which means this will almost certainly end up as an FSM that steps through each phase of the protocol one clock cycle at a time.
             </p>
 
+            <h1>The Problem</h1>
             <p>
               So the first milestone is intentionally very small: I do not need to write a full display driver yet. I just need to prove that the FPGA can begin an I2C transaction properly and that the OLED responds.
             </p>
@@ -182,14 +188,18 @@
             <p>
               If I can see that ACK, either internally on the FPGA or externally on the logic analyzer, then the bus timing is at least sane and the basic driver structure is working. Once that part is reliable, sending actual commands and data to the display becomes much more straightforward.
             </p>
+            <br><br>
 
-            <h3>Wiring</h3>
+            <h1>Wiring</h1>
             <p>
               I connected the OLED to the FPGA and the Logic Analyzer following the diagram below:
             </p>
-            <img src="/assets/img/projects/fpga_doohickey/log6/I2C_OLED_Connections.png" alt="OLED Wiring Diagram" class="log-image">
+            <br>
+            <img src="/assets/img/projects/fpga_doohickey/log6/I2C_OLED_Connections.jpg" alt="OLED Wiring Diagram" class="log-image">
+            <br>
+            <br>
 
-            <h3>Program Architecture</h3>
+            <h1>Program Architecture</h1>
             <p>
               In my 5th semester, I wrote an assembly language driver for a line-following robot [TODO: link to follow] that involved a similar structure to communicate with the on-board LCD. 
               It had a multi-level structure, where each level would be responsible for a different abstraction of the protocol. I decided to take a similar approach in this project:
@@ -203,34 +213,34 @@
               It's best practice, in my experience, to strictly define the responsibilities of each layer to keep them as separate and reusable as possible.
   
               <br>
-              <h3>[L1] Bit Engine</h3>
+              <h2>[L1] Bit Engine</h2><br>
               <i>i2c_bit_engine</i>
               This is the lowest-level timed line driver. It should receive commands like 'drive SDA LO', 'release SCL', 'sample SDA', etc. It should also wait for a shared <i>tick</i> to occur,
               and step through these tiny timing phases. It's dumb and reusable, and doesn't know anything about anything WRT addresses, bytes, or transactions. It's no more than a simple tool for higher levels to use.
   
               <br>
-              <h3>[L2] Byte Engine</h3>
+              <h2>[L2] Byte Engine</h2><br>
               <i>i2c_byte_engine</i>
               This is the next level up, and where START/STOP/WRITE_BIT/READ_BIT should live. This module should generate the S/P primitive states, be able to write and read bits using the <i>i2c_bit_engine</i>. 
               It should also be able to take in a byte and write it out bit by bit, and read in a byte bit by bit and return it. Finally, it should be able to handle the ACK bit.
 
               <br>
-              <h3>[L2] Tick Generator</h3>
+              <h2>[L2] Tick Generator</h2><br>
               <i>i2c_tick_generator</i>
               This module generates the timing ticks for the I2C protocol. It should be able to run at a configurable speed, and generate a tick at the appropriate intervals. The <i>i2c_bit_engine</i> will use this tick to step through its timing phases.
 
               <br>
-              <h3>[L3] I2C Master</h3>
+              <h2>[L3] I2C Master</h2><br>
               <i>i2c_master</i>
               This is the highest level of the driver, and should know how to structure transactions. It takes in a transaction <i>intent</i>, and commands the <i>i2c_byte_engine</i> based on that.
 
               <br>
-              <h3>[L4] Top Level Program</h3>
+              <h2>[L4] Top Level Program</h2><br>
               <i>top</i>
               This is the top level of the design, and should run the entire program. It decides what to do and when, and commands the <i>i2c_master</i> to execute transactions based on that. For this first test, the program should just run one transaction to send the OLED address and read back the ACK, then stop.
             </p>     
-            
-            <h3>SV L2 Tick Generator Implementation</h3>
+            <br><br>
+            <h1>SV L2 Tick Generator Implementation</h1>
             <p>
               I first decided to implement the L2 Tick Generator, since the Bit Engine will need it to run. For this, I made the following 2 files:
               <br><br>
@@ -240,7 +250,7 @@
               <br><br>
               The tick generator is pretty straightforward:
               <br><code>i2c_tick_generator.sv</code>
-              <br><br>
+              <br>
 <pre><code>
 module i2c_tick_generator #( // constant params
 	parameter int unsigned CLK_HZ		= 50_000_000,
@@ -294,8 +304,7 @@ endmodule
 </code></pre>
 <br><br>
               The tick generator tester was also pretty simple:
-              <br><code>tick_test_top.sv</code>
-              <br><br>
+              <br><code>tick_test_top.sv</code><br>
 <pre><code>
 module tick_test_top #(	// Constant params
     parameter int unsigned CLK_HZ  = 50_000_000, // dictated by FPGA datasheet
