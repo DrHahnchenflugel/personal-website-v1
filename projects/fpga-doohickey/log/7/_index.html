@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log 6 - FPGA Doohickey - Victor Lelikov</title>
+
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/log.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
+          <h1 class="project-title">Log 6 - I2C OLED Part 1</h1>
+          <p class="project-sub muted">
+            Writing a driver for an I2C OLED display.
+          </p>
+
+          <div class="project-meta">
+            <span class="pill">SystemVerilog</span>
+            <span class="pill">I2C</span>
+            <span class="pill">Logic Analyzer</span>
+          </div>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">Back to Projects</a>
+            <a class="btn" href="/projects/fpga-doohickey/">Back to FPGA Doohickey</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="start">
+        <div class="container">
+          <article class="card-lite log-entry">
+            <header class="log-entry__header">
+              <div>
+                <p class="log-date muted">February 16, 2026. 8:00 PM.</p>
+                <h2 class="log-title">Log 6 - I2C OLED Part 1</h2>
+              </div>
+              <span class="pill">FPGA Doohickey</span>
+            </header>
+            <p>
+                <strong>My next task was to write a driver for my I2C OLED display.</strong>
+                <br>
+                I bought a 0.096" OLED display from Amazon for around $15. It has a resolution of 128x64 pixels and uses the SSD1306 controller, which, I hear, is very common for small OLED displays.
+                It has 4 pins - VCC, GND, SCL, and SDA. The first two are for power, and the last two are for I2C communication. I connected VCC to 3.3V, GND to GND, SCL to pin 110, and SDA to pin 112 on my FPGA dev board.
+                <br>
+                Having done some coursework on I2C in the past, I'm entirely unfamiliar with the protocol, but i still need to read the SSD1306 datasheet to understand how to communicate with the display. 
+                Conveniently, I also have a USB Logic Analyser from Saleae, which I can use to sniff the I2C communication from my FPGA to the display and debug my driver.
+                <br>
+                The first thing I did was to write a simple program that would send try to drive the pins. From my knowledge of I2C, the pins are open-drain, meaning they can only be driven LOW.
+                So, I wrote a simple module that would drive the pins low for a few cycles then release them for a few cycles, and repeat this pattern indefinitely.
+                <br>
+                <pre><code>
+module top ( // Generic pins i wrote
+    input  logic clk,	// internal 50Hz clk
+    input  logic rst_n,	// reset pin
+    inout  wire  SDA,	// SDA pin
+    inout  wire  SCL		// SCL pin
+);
+
+ logic [25:0] ctr;	//25-bit counter vector to control the pins
+ logic sda_drive_low, scl_drive_low; //logic vectors to store 
+
+ // free-running binary counter
+ always_ff @(posedge clk or negedge rst_n) begin //reset counter on rst button press
+	  if (!rst_n) ctr <= 0;
+	  else        ctr <= ctr + 1;
+ end
+
+ // Drive low half the time, release half the time
+ // SCL should work at a quarter of the period of SDA
+ assign scl_drive_low = ctr[20];
+ assign sda_drive_low = ctr[22];
+
+ // Force open-drain behavior
+ // Set SDA and SCL based on the drive_low control variable for SCL and SDA
+ // if drive_low is 1, then set to 0; if drive_low is 0, then set to Z (high-impedence)
+ assign SCL = scl_drive_low ? 1'b0 : 1'bz;
+ assign SDA = sda_drive_low ? 1'b0 : 1'bz;
+
+endmodule
+                </code></pre>
+                <br>
+                That let me run a simple test to see if my logic analyser worked as expected. I'm expecting to see a square wave on both the SCL and SDA lines,
+                with the SCL line toggling at four times the frequency of the SDA line.
+                <br>
+                <img src="assets/img/projects/fpga_doohickey/logic-analyser-1.png" alt="Logic Analyser Output">
+                <br>
+                Looking at the logic analyser output, I can see that this is, indeed, the case. The SCL line, on channel 0, is toggling at 4x the frequency of the 
+                SDA line, on channel 2. This gives me some confidence that all my tools are working as expected, and I can move onto the next part.
+                <br>
+                <h4>The Next Part</h4>
+                The next think I'll test is the display's response to I2C signals. The first thing I'll try is to send the display its I2C address, as indicated on the back of the display PCB, and see if it responds with an ACK.
+                After a couple hours of troubleshooting, I got a simple I2C driver working:
+                <br>
+                <pre><code>
+module i2c_test ( // Generic pins i wrote
+    input  logic clk,	// internal 50MHz clk
+    input  logic rst_n,	// reset pin
+    inout  wire  SDA,	// SDA pin
+    inout  wire  SCL,		// SCL pin
+	 output logic ACK_LED // acknowledge LED, using the on-board pin.
+);
+
+ /*
+	Open-Drain behaviour
+	If drive_low is 1, then set to 0; if drive_low is 0, then set to Z (high-impedance)
+	Set SDA and SCL based on the drive_low control variable for SCL and SDA
+ */
+ logic sda_drive_low, scl_drive_low; // logic bits to store drive controls
+ wire sda_in = SDA;						 // convert value of SDA to a logical bit  
+ wire scl_in = SCL;						 // convert value of SCL to a logical bit  
+ // output values
+ assign SCL = scl_drive_low ? 1'b0 : 1'bz;
+ assign SDA = sda_drive_low ? 1'b0 : 1'bz;
+ 
+ /*
+	Slow I2C phase tick
+	One I2C bit = two phases [(SCL low, then SCL high)x2]
+ */
+ localparam int CLK_HZ 		= 50_000_000;			// FPGA CLK frequency
+ localparam int SCL_HZ 		= 1;                    // I2C frequency (set slow for debugging)
+ localparam int PHASE_HZ 	= SCL_HZ * 2;			// Each SCL pulse has 2 components: HIGH and LOW. This doubles the CLK rate to adjust for that
+ localparam int DIV 			= CLK_HZ / PHASE_HZ; // Calculate the rate at which to generate phase steps (every {n=DIV} FPGA clocks, generate one 'step')
+
+ // Phase values 
+ // This counter will update the FSM based on the ticks 
+ logic [$clog2(DIV)-1:0] div_ctr;		// n-bit logic vector storing a counter big enough to count up to DIV-1
+ logic phase_tick;							// 1-bit logic vector that becomes '1' for every FPGA clock cycle whenever the divider hits its terminal count.
+ 
+ // Counter that counts up with the CLK and can be RST
+ always_ff @(posedge clk or negedge rst_n) begin
+   // Active LO reset button
+	if (!rst_n) begin
+		div_ctr			<= '0;
+		phase_tick		<= 1'b0;
+	// Normal operation
+	end else begin
+		// Once counter reaches DIV, update phase_tick value to 1 and reset div_ctr
+		if (div_ctr == DIV-1) begin
+			div_ctr 		<= '0;
+			phase_tick	<= 1'b1;
+		// If counter not reached DIV, phase_tick stays 0 and div_ctr increments
+		end else begin
+			div_ctr		<=	div_ctr + 1;
+			phase_tick	<= 1'b0;
+		end
+	end
+ end
+ 
+ /*
+	FSM : START -> SEND 0x78 -> ACK -> STOP -> gap
+ */
+ typedef enum logic [3:0]{
+		ST_IDLE,				// idle state 
+		ST_START_A,			// ensure bus idle (both released)
+		ST_START_B,			// START: SDA LO while SCL HI			
+		ST_BIT_LOW,			// SCL LO, SDA current bit
+		ST_BIT_HIGH,		// SCL HI, SDA stable
+		ST_ACK_LOW,			// SCL LO, release SDA for ACK
+		ST_ACK_HIGH,		// SCL HI, sample ACK
+		ST_STOP_A,			// SCL LO, SCA LO
+		ST_STOP_B,			// STOP: SCL HI, release SDA
+		ST_GAP				// idle delay between transactions
+ } state_t;
+ 
+ state_t state;
+ 
+ // Byte to transmit: 0x78 = (0x3C << 1) | 0
+ logic [7:0] tx_byte;
+ logic [2:0] bit_idx;
+ 
+ // Gap to make repeats more obvious on analyser
+ logic [19:0] gap_ctr;
+ 
+ /*
+	State progression logic
+	active on positive CLK edge or negative RST(active LO) edge
+ */
+always_ff @(posedge clk or negedge rst_n) begin
+	 // If RST is LO, reset state
+    if (!rst_n) begin
+        state   <= ST_IDLE;	// set to IDLE state
+        tx_byte <= 8'h78;		// set next transmit byte to 0x78
+        bit_idx <= 3'd7;		// set next byte count to 7 (MSB sent first)
+        gap_ctr <= '0;			// set gap counter to 0
+        ACK_LED <= 1'b0;		// set ACK LED to 0
+	 // Normal operations
+    end else if (phase_tick) begin
+		  // FSM
+        case (state)
+            // IDLE
+				ST_IDLE: begin
+                tx_byte <= 8'h78;
+                bit_idx <= 3'd7;
+                state   <= ST_START_A;
+            end
+
+				// START A
+            ST_START_A: begin
+                state <= ST_START_B;
+            end
+
+				// START B
+            ST_START_B: begin
+                state <= ST_BIT_LOW;
+            end
+
+				// BIT LOW
+            ST_BIT_LOW: begin
+                state <= ST_BIT_HIGH;
+            end
+
+				// BIT HIGH
+            ST_BIT_HIGH: begin
+                if (bit_idx == 0)
+                    state <= ST_ACK_LOW;
+                else begin
+                    bit_idx <= bit_idx - 1'b1;
+                    state   <= ST_BIT_LOW;
+                end
+            end
+
+				// ACK LOW
+            ST_ACK_LOW: begin
+                state <= ST_ACK_HIGH;
+            end
+
+				// ACK HIGH
+            ST_ACK_HIGH: begin
+                // ACK is active-low: slave pulls SDA low
+                ACK_LED <= (sda_in == 1'b0);
+                state   <= ST_STOP_A;
+            end
+
+				// STOP A
+            ST_STOP_A: begin
+                state <= ST_STOP_B;
+            end
+
+				// STOP B
+            ST_STOP_B: begin
+                gap_ctr <= '0;
+                state   <= ST_GAP;
+            end
+
+				// GAP (delay)
+            ST_GAP: begin
+                gap_ctr <= gap_ctr + 1'b1;
+                if (gap_ctr == 20'd500_000)
+                    state <= ST_IDLE;
+            end
+            default: state <= ST_IDLE;
+        endcase
+    end
+end
+
+/*
+ Combinational output decode logic
+*/
+always_comb begin
+    // defaults: release both (idle-high)
+    scl_drive_low = 1'b0;
+    sda_drive_low = 1'b0;
+
+    case (state)
+        ST_START_B: begin
+            // START: SDA low while SCL high
+            scl_drive_low = 1'b0;
+            sda_drive_low = 1'b1;
+        end
+
+        ST_BIT_LOW: begin
+            // SCL low, set SDA for bit
+            scl_drive_low = 1'b1;
+            sda_drive_low = (tx_byte[bit_idx] == 1'b0);
+        end
+
+        ST_BIT_HIGH: begin
+            // SCL high, hold SDA stable
+            scl_drive_low = 1'b0;
+            sda_drive_low = (tx_byte[bit_idx] == 1'b0);
+        end
+
+        ST_ACK_LOW: begin
+            // SCL low, release SDA so slave can ACK
+            scl_drive_low = 1'b1;
+            sda_drive_low = 1'b0;
+        end
+
+        ST_ACK_HIGH: begin
+            // SCL high, still release SDA, sample ACK in FF block
+            scl_drive_low = 1'b0;
+            sda_drive_low = 1'b0;
+        end
+
+        ST_STOP_A: begin
+            // prep stop: SCL low, SDA low
+            scl_drive_low = 1'b1;
+            sda_drive_low = 1'b1;
+        end
+
+        ST_STOP_B: begin
+            // STOP: SCL high, SDA released high
+            scl_drive_low = 1'b0;
+            sda_drive_low = 1'b0;
+        end
+
+        default: begin
+            // IDLE / GAP / START_A: released
+        end
+    endcase
+ end
+ 
+ endmodule
+                </code></pre>
+                <br>
+                In my logic analyser, I saw the following result:
+                <img src="assets/img/projects/fpga_doohickey/logic-analyser-2.png" alt="Logic Analyser Output showing a successful ACK">
+                <br>
+                Let's go through this: the top trace is my SCL, the bottom my SDA. 
+                <br>The first part of the traces show the <strong>START</strong> condition: SDA goes from HIGH to LOW while SCL is HIGH.
+                <br>Then, we see 8 bits of data being sent: 0 1 1 1 1 0 0 0, which is 0x78, the I2C address of the display.
+                <br>Finally, we see a 9th bit - the <strong>ACK</strong> condition: SDA pulled LOW by the slave while SCL is HIGH, indicating that the display acknowledged its address was received. 
+                This is a great sign, as it means my driver is working and I can move on to sending actual commands to the display. Excellent!
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>
