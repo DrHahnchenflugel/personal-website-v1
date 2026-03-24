@@ -134,9 +134,15 @@
             <p>
               Now, let's write a test file for this byte engine and see if it works. We need to test the various primitives first, then we can move on to testing byte writes.
               Let's start with the primitives. I wrote an SV test file that commands the byte engine to execute just the S and P conditions, and used my logic analyzer to confirm.
+              But that's not the big test here. I have to check if, when i write a byte with the address of the OLED display, the correct sequence of bits is sent out over the SDA line,
+              and (biggest test) the ACK bit is correctly received. So, I wrote a test that commands the byte engine to write the byte <strong>0x78</strong> (which is the 7-bit I2C address
+              of the OLED display, left-shifted by 1 bit to account for the R/W bit, which is set to 0 for write) and observed the following on the logic analyzer.
             </p>
-            
-
+            <img src="/assets/img/projects/fpga_doohickey/log7/transaction_1.png" alt="Logic analyzer capture of the I2C transaction for writing the byte 0x78 to the OLED display. The capture shows the SCL and SDA lines, with the correct timing and bit values for the START condition, the byte transmission, and the ACK bit.">
+            <p>
+              IT LIVES!!! The capture shows a proper S and P condition, with the correct timing. The byte is correctly transmitted, and, most excitingly, the ACK bit is correctly received! 
+              This is a major milestone for this project, as it means the core functionality of the I2C driver is working. Next steps, for the next log, will be to implement the higher-level operations.
+            </p>            
           </article>
         </div>
       </section>

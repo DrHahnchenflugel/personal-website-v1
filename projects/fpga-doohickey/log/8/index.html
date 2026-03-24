@@ -48,34 +48,130 @@
           <article class="card-lite log-entry">
             <header class="log-entry__header">
               <div>
-                <p class="log-date muted">February 17, 2026. 00:15 AM.</p>
-                <h2 class="log-title">Log 7 - I2C OLED Part 2</h2>
+                <p class="log-date muted">March 24, 2026. 06:00 PM.</p>
+                <h2 class="log-title">Log 8 - SSD1306</h2>
                 <br>
-                In the previous log, I got a simple I2C driver working and was able to confirm that the display acknowledged its address. 
-                This is a great sign, as it means my driver is working and I can move on to sending actual commands to the display. 
-                Having confirmed that the display is responding to I2C signals, I can now make a more complicated driver that sends specific commands and data.
-                <br>
-                STUFF GOES HERE
-                <br>
-                And here's the resulting waveform set. All 164 pulses worth.
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave1.png"> 
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave2.png">
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave3.png">
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave4.png">
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave5.png">
-                <br>
-                <img src="/assets/img/projects/fpga_doohickey/log7/wave6.png">
+                <p>
+                  In the previous log, I got a simple I2C driver core working and was able to confirm that the display acknowledged its address. 
+                  This is a great sign, as it means my driver is working and I can move on to sending actual commands to the display. 
+                  Having confirmed that the display is responding to I2C signals, I can now make a more complicated driver that sends specific commands and data.
+                </p>
               </div>
-              <span class="pill">FPGA Doohickey</span>
-            </header>
-            <p>
+            <span class="pill">FPGA Doohickey</span>
+          </header>
 
-            </p>
+          <p>
+            I started by looking at the datasheet for the OLED display driver - as I mentioned in Log 6, it's a SSD1306 chip, the datasheet for which I found on
+            <a href="https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf">Adafruit's website</a>.
+            So, let's look at the highlights of the datasheet.
+          </p> 
+          <br>
+
+          <h1>The I2C Protocol</h1>
+          <ul>
+            <li>The master initiates the communication by generating a START condition. <i>(Done, confirmed working)</i></li>
+            <li>The slave address is following the start condition ... either "b0111100" or "b0111101". <i>(Done, confirmed working)</i></li>
+            <li>The write mode is established by setting the R/W bit to logic "0". <i>(Done, confirmed working)</i></li>
+            <li>An acknowledgement signal will be generated after receiving one byte of data, including the slave address and R/W# bit. <i>(Add acknowledge failure handling)</i></li>
+            <li>After the transmission of the slave address, either the control byte or the data byte may be sent across the SDA. A control byte mainly consistes of Co and
+              D/C# bits following by 6 "0"'s. <i>(Add control/data byte transmission)</i>
+            </li>
+            <li>If the Co bit is set as logic "0", the transmission of the following information will contain data bytes only. <i>(Add control/data byte transmission)</i></li>
+            <li>The D/C# bit determines the next data byte is acted as a command or a data. If the D/C# bit is set to logic "0", it defines the following data byte (D[7:0]) as a command.
+              If the D/C# bit is set to logic "1", it defines the following data byte (D[7:0]) as a data which will be stored at the GDDRAM. The GDDRAM column address pointer will be
+              increased by one automatically after each data write.  <i>(Add D/C# bit handling)</i>
+            </li>
+            <li>Acknowledge bit will be generated after receiving each control byte or data byte  <i>(Done, confirmed working)</i></li>
+            <li>The write mode will be finished when a stop condition is applied.  <i>(Add general write structure)</i></li>
+          </ul>
+          <br>
+
+          <h1>The Graphic Display Data RAM (GDDRAM)</h1>
+          <p>
+            As opposed to... the graphic non-display? Anyway.
+            The GDDRAM is a bit-mapped static RAM that holds the bit pattern to be displayed. The size of the RAM is 128x64 bits, equal to the pixel-wise size of the screen,
+            and is divided into 8 pages, from PAGE0 through PAGE7, which are used for monochrome 128x64 dot matrix display.
+            <br>
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig8-13.png">
+            <br>
+            <i>Fig. 8-13</i>, above, shows the way the pages are structured. <i>Fig. 8-14</i>, below, zooms into PAGE2 (COM16..23), and shows its individual bit-wise representation.
+            <br>
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig8-14.png">
+            <br>
+            Let's examine <i>Fig. 8-14</i>. There are 128 rows, SEG0..SEG127. Each row is represented by 1 byte of data, with the data's LSB (D0) being stored in the top byte, 
+            COM16, and the data's MSB (D7) stored in the bottom byte, COM23. Thus, whenever one data byte is written into the GDDRAM, all the rows of the current column in the current page
+            are filled. 
+            <br>
+            Notably, the PAGEs can be remapped from the black to the green mapping, as shown in <i>Fig. 8-13</i> for mechanical flexibility. 
+            <br>
+            There are 3 different memory addressing modes in the SSD1306: page addressing mode, horizontal addressing mode, and vertical addressing mode. <i>(We stan the Oxford comma; just ask Nelson Mandela, the Pope, a demigod and ***** collector).</i>
+            The <strong>20h</strong> command sets the way of memory addressing into one of the above 3 modes. There, "COL" means the graphic display data RAM column.  
+            <br>
+            <br>
+            <h2>[1] PAGE ADDRESSING MODE (A[1:0]=10xb)</h2>
+            In page addressing mode, after the display RAM is read/written, the column address pointer is increased automatically by 1. If the column address pointer reaches column end address, the column address pointer
+            is reset to column start address and page address pointer is not changed. I have to set the new page and column addresses in order to access the next page RAM content. The sequence of movement of the PAGE and column address
+            point for page addressing mode is shown below, in <i>Fig. 10-1.</i>. In the normal display data RAM R/W and page addressing mode, the following steps are required to define the starting RAM access pointer location:
+            <ul>
+              <li>Set the page start address of the target display location by command B0h to B7h.</li>
+              <li>Set the lower start column address of pointer by command 00h~0Fh.</li>
+              <li>Set the upper start column address of pointer by command 10h~1Fh.</li>
+            </ul>
+            For example, if the page address is set to B2h, lower column address is 03h and upper column address is 10h, then that means the starting column is SEG3 of PAG2. The RAM access pointer is located
+            as shown below, in <i>Fig. 10-2.</i> The input data byte will be written into RAM position of column 3.  
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig10-1.png">  
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig10-2.png">
+            <br>
+            <br>
+            <h2>[2] HORIZONTAL ADDRESSING MODE (A[1:0]=00b)</h2>
+            This one's much simpler. In horizontal addressing mode, after the display RAM is read/written, the column address pointer is increased automatically by 1. If the column address pointer reaches column end address, 
+            the column address pointer is reset to column start address and page address pointer is increased by 1. The sequence of movement of the page and column address point for the corizontal addressing mode is shown below, in
+            <i>Fig. 10-3.</i> When both column and page address pointers reach the end address, the pointers are reset to column start address and page start address (Dotted line in <i>Fig. 10-3</i>).
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig10-3.png">
+            <br>
+            <br>
+            <h2>[3] VERTICAL ADDRESSING MODE (A[1:0]=01b)</h2>
+            This is essentially the Horizontal addressing mode rotated 90 degrees and flipped. That is, after the display RAM is read/written, the page address pointer is increased automatically by 1. If the page address pointer reaches
+            the page end address, the page address pointer is reset to page start address and column address pointer is increased by 1. The sequence of movement of the page and column address point for vertical addressing mode is shown below,
+            in <i>Fig. 10-4</i>. When both column and page address pointers reach the end address, the pointers are reset to column start address and page start address (Dotted line in <i>Fig. 10-4</i>).
+            <img src="/assets/img/projects/fpga_doohickey/log8/fig10-4.png">
+            <br>
+            In order to define the RAM access pointer locations in R/W and horizontal/vertical addressing mode, the following steps are required:
+            <ul>
+              <li>Set the column start and end addresses of the target display location by command 21h.</li>
+              <li>Set the page start and end addresses of the target display location by command 22h.</li>
+            </ul>
+          </p>
+          <br>
+
+          <h1>Miscellaneous Info</h1>
+          <ul>
+            <li>To prevent screen tearing, I need to consider frame synchronisation. That is, if the FPGA writes data to the OLED slower than the OLED's framerate (which, I 
+              believe, I can change via command), I have to figure something else out. Maybe update slower, maybe something else.
+            </li>
+            <li>The chip is initialised as follows:
+              <li>Display <strong>OFF</strong></li>
+              <li><strong>128x64</strong> display mode</li>
+              <li>Normal sengment and display data column address and row address mapping (SEG0 mapped to 00h, COM0 mapped to 00h)</li>
+              <li>Shift reg data clear in serial iface</li>
+              <li>Display start line is set at display RAM address 0</li>
+              <li>Column address counter is set at 0</li>
+              <li>Normal scan direction of the COM outputs</li>
+              <li>Contrast control register is set at 7Fh</li>
+              <li>Normal display mode, equivalent to A4h command</li>
+            </li>
+          </ul>
+          <br>
+
+          <h1> Command Table</h1>
+          <p>
+            Let's look at the command tables, once again courtesy of Adafruit. I chose to ignore Table 2, which shows scrolling commands, as I have no plans to use scrolling.
+          </p> 
+          <img src="/assets/img/projects/fpga_doohickey/log8/table1.png">
+          <img src="/assets/img/projects/fpga_doohickey/log8/table3a.png">
+          <img src="/assets/img/projects/fpga_doohickey/log8/table3b.png">
+          <img src="/assets/img/projects/fpga_doohickey/log8/table4.png">
+          <img src="/assets/img/projects/fpga_doohickey/log8/table5.png">
           </article>
         </div>
       </section>
