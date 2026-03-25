@@ -25,7 +25,7 @@
       <section class="project-hero">
         <div class="container">
           <div class="project-crumbs muted">Projects / FPGA Doohickey / Logs</div>
-          <h1 class="project-title">Log 6 - I2C OLED Part 1</h1>
+          <h1 class="project-title">Log 8 - SSD1306</h1>
           <p class="project-sub muted">
             Writing a driver for an I2C OLED display.
           </p>
@@ -55,6 +55,8 @@
                   In the previous log, I got a simple I2C driver core working and was able to confirm that the display acknowledged its address. 
                   This is a great sign, as it means my driver is working and I can move on to sending actual commands to the display. 
                   Having confirmed that the display is responding to I2C signals, I can now make a more complicated driver that sends specific commands and data.
+                  <br>
+                  We'll start with a summary of the relevant aspects of the 1306 datasheet, then move onto what needs to be done.
                 </p>
               </div>
             <span class="pill">FPGA Doohickey</span>
@@ -88,7 +90,7 @@
 
           <h1>The Graphic Display Data RAM (GDDRAM)</h1>
           <p>
-            As opposed to... the graphic non-display? Anyway.
+            <i>As opposed to... the graphic non-display?</i><br>
             The GDDRAM is a bit-mapped static RAM that holds the bit pattern to be displayed. The size of the RAM is 128x64 bits, equal to the pixel-wise size of the screen,
             and is divided into 8 pages, from PAGE0 through PAGE7, which are used for monochrome 128x64 dot matrix display.
             <br>
@@ -98,7 +100,7 @@
             <br>
             <img src="/assets/img/projects/fpga_doohickey/log8/fig8-14.png">
             <br>
-            Let's examine <i>Fig. 8-14</i>. There are 128 rows, SEG0..SEG127. Each row is represented by 1 byte of data, with the data's LSB (D0) being stored in the top byte, 
+            Let's examine <i>Fig. 8-14</i>. There are 128 columns, SEG0..SEG127. Each column is represented by 1 byte of data, with the data's LSB (D0) being stored in the top byte, 
             COM16, and the data's MSB (D7) stored in the bottom byte, COM23. Thus, whenever one data byte is written into the GDDRAM, all the rows of the current column in the current page
             are filled. 
             <br>
@@ -163,7 +165,7 @@
           </ul>
           <br>
 
-          <h1> Command Table</h1>
+          <h1>Command Table</h1>
           <p>
             Let's look at the command tables, once again courtesy of Adafruit. I chose to ignore Table 2, which shows scrolling commands, as I have no plans to use scrolling.
           </p> 
@@ -172,6 +174,24 @@
           <img src="/assets/img/projects/fpga_doohickey/log8/table3b.png">
           <img src="/assets/img/projects/fpga_doohickey/log8/table4.png">
           <img src="/assets/img/projects/fpga_doohickey/log8/table5.png">
+          <br>
+
+          <h1>Next Steps</h1>
+          Before doing anything, I'm going to upgrade my i2c_byte_engine_test.sv from the previous log to try to send a known-good transaction:
+          <ul>
+            <li>S CONDITION</li>
+            <li>0x78 <i>[Address + 0=write]</i></li>
+            <li>0x00 <i>[Command mode]</i></li>
+            <li>INIT PROCESS (per datasheet):
+              <li>0xAE <i>[Display off]</i></li>
+              <li>0x8D <i>[Charge pump setting]</i></li>
+              <li>0x14 <i>[EN Charge pump]</i></li>
+              <li>0xA5 <i>[All Pixels on]</i></li>
+              <li>0xAF <i>[Display on]</i></li>
+            </li>
+            <li>S CONDITION</li>
+          </ul>
+          That will let me confirm visually that everything works properly, and inspect the pixels to make sure I don't have any dead ones.
           </article>
         </div>
       </section>
