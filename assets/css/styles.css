@@ -175,3 +175,10 @@ li strong{ margin-right: 6px; }
   box-shadow: 0 20px 60px rgba(0,0,0,.5);
   border: 1px solid var(--border);
 }
+
+/* Upper toolbar icon */
+.nav-icon{
+  height: 20px;
+  width: auto;
+  display: block;
+}
