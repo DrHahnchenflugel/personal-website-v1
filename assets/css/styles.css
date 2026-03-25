@@ -177,8 +177,10 @@ li strong{ margin-right: 6px; }
 }
 
 /* Upper toolbar icon */
-.nav-icon{
-  height: 20px;
-  width: auto;
+header nav a img.nav-icon{
+  height: 20px !important;
+  width: auto !important;
+  max-width: none !important;
   display: block;
+  flex: 0 0 auto;
 }
