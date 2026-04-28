@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generic Project - Victor Lelikov</title>
+
+    <!-- paint viewport to avoid white flash -->
+    <style>html,body{background:var(--bg,#0f1218);color:var(--fg,#e8d9c3);}</style>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/projects/projects.css?v=dev2" />
+    <link rel="stylesheet" href="/assets/css/components/pill.css?v=dev2">
+    <link rel="stylesheet" href="/assets/css/components/cards.css?v=dev2">
+    <link rel="icon" href="/assets/img/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  </head>
+
+  <body>
+    <div id="site-header"></div>
+
+    <main>
+      <!-- Hero -->
+      <section class="project-hero">
+        <div class="container">
+          <div class="project-crumbs muted">Projects / IT / Automated Windows Deployment Scripts</div>
+          <h1 class="project-title">Automated Windows Deployment Scripts</h1>
+          <p class="project-sub muted">
+            A set of powershell and bash scripts that help in the setup of a computer from OOBE. Implemented as part of Automated Windows Deployment Process.
+          </p>
+
+          <div class="project-actions">
+            <a class="btn" href="/projects/">< Back to Projects</a>
+            <a class="btn btn-primary" href="#" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- What it is -->
+      <section>
+        <div class="container">
+          <h2>What it is</h2>
+          <p>
+            As part of my efforts to fully automate the deployment of Windows, I realised there were some steps that could not be done as part of the OOBE setup (as far as I could see),
+            and had to be done after the fact. Partially, this was because some of these steps required computer restarts between them - if i try to rename my PC and join the domain right after,
+            weird stuff would occur. <strong>Here's what I needed done manually:</strong>
+            <br>
+            <ul>
+              <li><strong><i>STAGE 1:</i></strong></li>
+              <li><strong>Task:</strong> Rename the computer as dictated by it's asset tag.</li>
+              <li><strong>Restart.</strong></li>
+              <li><strong><i>STAGE 2:</i></strong></li>
+              <li><strong>Task:</strong> Join the domain with specific settings.
+                <ul>
+                  <li><i>Domain Host:</i> Specific server FQDN, based on location.</li>
+                  <li><i>Domain Host:</i> Specific Organisational Unit (OU), based on computer type.</li>
+                  <li>Specific admin username/password.</li>
+                </ul>
+              </li>
+              <li><strong>Task:</strong> Set specific firewall rules to allow PDQ Deploy/Inventory to work.
+                <ul>
+                  <li><i>Enable</i> File and Printer Sharing.</li>
+                  <li><i>Enable</i> ICMPv4 Inbound Ping.</li>
+                </ul>
+              </li>
+              <li><strong>Restart.</strong></li>
+              <li><strong><i>STAGE 3:</i></strong></li>
+              <li><strong>Task:</strong> Update Group Policy.</li>
+              <li><strong>Task:</strong> Delete all the files once finished.</li>
+            </ul>
+            <br>
+            So, 3 stages, and I have to restart between each one. I create a batch script for each stage. Then, as part of the batch script for <strong>Stage 1</strong>,
+            I schedule a task that is going to execute <strong>Stage 2</strong> to run after the restart <i>(ONLOGON)</i>. Ditto for <strong>Stage 2</strong> into <strong>Stage 3</strong>.
+            <br>
+            A few of the tasks are easier to do with powershell, as opposed to group policies. Namely, in <strong>Stage 2</strong>, the domain needs to be joined using <code>Add-Computer</code>, and
+            the firewall rules need updating.
+          </p>
+          <p>
+            <strong>Here's the structure:</strong>
+<pre>
+<strong>Stage1_Rename.bat</strong>
+|
+|_<strong>Stage2_JoinDomain.bat</strong>
+    |_<i>JoinDomain.ps1</i>
+    |_<i>FwallRules.ps1</i>
+    |
+    |_<strong>Stage3_GpUpdate.bat</strong>
+</pre>
+          </p>
+        </div>
+      </section>
+
+      <!-- Basic tech stack -->
+      <section>
+        <div class="container">
+          <h2>The Code</h2>
+          <h3>Stage1_Rename.bat</h3>
+          <br>
+          <pre>
+          <code>
+powershell -ExecutionPolicy Bypass -Command "$P = Read-Host 'The PC Name is on its back. Please enter it here:';Rename-Computer -NewName $P -Force"
+schtasks /Create /TN "Stage2_JoinDomain" /TR "C:\Scripts\Stage2_JoinDomain.bat" /SC ONLOGON /RL HIGHEST /F
+shutdown /r /t 5
+          </code>
+          </pre>
+
+          <br>
+          <br>
+          <h3>Stage2_JoinDomain.bat</h3>
+          <br>
+          <pre>
+          <code>
+del /f /q "C:\Scripts\Stage1_Rename.bat"
+powershell -ExecutionPolicy Bypass -File "C:\Scripts\JoinDomain.ps1"
+del /f /q "C:\Scripts\JoinDomain.ps1"
+powershell -ExecutionPolicy Bypass -File "C:\Scripts\FwallRules.ps1"
+del /f /q "C:\Scripts\FwallRules.ps1"
+schtasks /Create /TN "Stage3_GpUpdate" /TR "C:\Scripts\Stage3_GpUpdate.bat" /SC ONLOGON /RL HIGHEST /F
+schtasks /Delete /TN "Stage2_JoinDomain" /F
+shutdown /r /t 5
+          </code>
+          </pre>
+
+          <br>
+          <br>
+          <h3>Stage3_GpUpdate.bat</h3>
+          <br>
+          <i>Yeah, I know.</i>
+          <pre>
+          <code>
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+echo DO NOT TOUCH! THIS COMPUTER IS UPDATING, AND WILL BE DONE IN 2 MINUTES. YOU WILL BE AUTO LOGGED-OUT, THEN YOU CAN LOG BACK IN.
+timeout 10
+del /f /q "C:\Scripts\Stage2_JoinDomain.bat"
+gpupdate /force
+timeout /t 30
+schtasks /Delete /TN "Stage3_GpUpdate" /F
+logoff
+          </code>
+          </pre>
+
+          <br>
+          <br>
+          <h3>FwallRules.ps1</h3>
+          <br>
+          <pre>
+          <code>
+Write-Host "Enabling File Sharing..."
+
+Enable-NetFirewallRule -DisplayGroup "File and Printer Sharing"
+
+Write-Host "Enabled!"
+Write-Host "Enabling ICMP4 Ping..."
+
+try{
+    Set-NetFirewallRule -Name "FPS-ICMP4-ERQ-In" -Enabled True
+    Enable-NetFirewallRule -Name "FPS-ICMP4-ERQ-In"
+    Write-Host "Enabled!"
+} catch {
+    Write-Host "Failed to find rule with name FPS-ICMP4-ERQ-In. Creating alternative..."
+    New-NetFirewallRule -Name "Allow ICMPv4 Inbound"`
+        -DisplayName "Allow ICMPv4 Inbound Echo Request"`
+        -Protocol ICMPv4 -IcmpType 8`
+        -Direction Inbound`
+        -Action Allow`
+        -Profile Any
+    Write-Host "Created alternative!"
+}
+
+Write-Host "Done!"
+          </code>
+          </pre>
+          
+          <br>
+          <br>
+          <h3>joinDomain.ps1</h3>
+          <br>
+          <pre>
+          <code>
+while ($true){
+  # Prompt for computer type
+  Write-Host "Select computer type:"
+  Write-Host "1 - REDACTED1"
+  Write-Host "2 - REDACTED2"
+  Write-Host "3 - REDACTED3"
+  Write-Host "4 - REDACTED4"
+  $selection = Read-Host "Enter number (1-4)"
+  $ou = '-1'
+  # Determine OUPath
+  switch ($selection) {
+      "1" { $ou = "<OU1_PATH>";
+          break }
+      "2" { $ou = "<OU2_PATH>" ;
+          break }
+      "3" { $ou = "<OU3_PATH>" ;
+          break }
+      "4" { $ou = "<OU4_PATH>" ;
+          break }
+      default {
+          Write-Host "Invalid selection."
+      }
+  }
+  if ($ou -ne '-1'){
+      break
+  }
+}
+
+while ($true){
+    # Prompt for location
+    Write-Host "Select location:"
+    Write-Host "1 - REDACTED1"
+    Write-Host "2 - REDACTED2"
+    Write-Host "3 - REDACTED3"
+    Write-Host "4 - REDACTED4"
+    $loc = Read-Host "Enter number (1-4)"
+    $server = '-1'
+    # Determine OUPath
+    switch ($loc) {
+        "1" { $server = "<DC_1_FQDN>";
+            break }
+        "2" { $server = "<DC_2_FQDN>" ;
+            break }
+        "3" { $server = "<DC_3_FQDN>" ;
+            break }
+        "4" { $server = "<DC_4_FQDN>" ;
+            break }
+        default {
+            Write-Host "Invalid selection."
+        }
+    }
+    if ($server -ne '-1'){
+        break
+    }
+}
+
+# Prompt for instructor password
+$plainPassword = Read-Host "Enter <admin account> password" -AsSecureString
+$username = "<CREDENTIAL>]"
+
+# Build credential
+$cred = New-Object System.Management.Automation.PSCredential ($username, $plainPassword)
+
+# Join the domain with specified OU
+Add-Computer -ComputerName $env:COMPUTERNAME `
+            -DomainName "<DOMAIN>" `
+            -OUPath $ou `
+            -Credential $cred `
+            -Server $server `
+            -ErrorAction Stop
+
+Write-Host "Computer has been added to the domain in OU: $ou"
+          </code>
+          </pre>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script src="/assets/js/theme.js?v=dev3" defer></script>
+    <script src="/assets/js/header.js?v=dev3" defer></script>
+    <script src="/assets/js/footer.js?v=dev3" defer></script>
+  </body>
+</html>

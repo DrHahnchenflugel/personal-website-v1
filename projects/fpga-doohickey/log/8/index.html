@@ -176,22 +176,51 @@
           <img src="/assets/img/projects/fpga_doohickey/log8/table5.png">
           <br>
 
-          <h1>Next Steps</h1>
+          <h1>Screen ON</h1>
           Before doing anything, I'm going to upgrade my i2c_byte_engine_test.sv from the previous log to try to send a known-good transaction:
           <ul>
             <li>S CONDITION</li>
-            <li>0x78 <i>[Address + 0=write]</i></li>
-            <li>0x00 <i>[Command mode]</i></li>
-            <li>INIT PROCESS (per datasheet):
-              <li>0xAE <i>[Display off]</i></li>
-              <li>0x8D <i>[Charge pump setting]</i></li>
-              <li>0x14 <i>[EN Charge pump]</i></li>
-              <li>0xA5 <i>[All Pixels on]</i></li>
-              <li>0xAF <i>[Display on]</i></li>
-            </li>
+            <li>78h <i>[Address + 0=write]</i></li>
+            <li>00h <i>[Command mode]</i></li>
+            <li>A5h <i>[Send Display ON]</i></li>
             <li>S CONDITION</li>
           </ul>
-          That will let me confirm visually that everything works properly, and inspect the pixels to make sure I don't have any dead ones.
+          That will let me confirm visually that everything works properly, and inspect the pixels to make sure I don't have any dead ones. Let's try it out!
+          <br>
+          <code>OLED_on_test.sv</code>
+          <br>
+          <img src="">
+          <br>
+          All the pixels turn on! More good news! Next, I'll try to write a specific image to the screen. 
+          
+          <h1>Specific Image</h1>
+          Before anything, I have to decide which addressing mode to use. Between page, horizontal, and vertical, here's what my research yielded:
+          <strong> Page mode</strong> is the most manual - I pick a page and column, and write to it. It's easy to debug, as I pick where everything goes.
+          <strong> Horizontal mode</strong> is the fastest - I set column start/end and page start/end, then stream the bytes. The screen fills L -> R, page by page.
+          For a full-screen buffer, this makes most sense. I can structure my storage as a 2D array and feed the GDDRAM from there. 
+          <strong> Vertical mode</strong> is similar to horizontal mode, but more niche and built for column-wise animation. 
+          <strong> I think I'll go for Horizontal mode, as such.</strong>
+          <br> 
+          <h3>Setup:</h3>
+          <ul>
+            <li>Take the existing code, before the P condition add:</li>
+            <li>A4h <i>[Resume RAM display]</i></li>
+            <li>A6h <i>[Normal display mode]</i></li>
+            <li>20h,00h <i>[Address mode: Horizontal]</i></li>
+            <li>21h,00h,7Fh <i>[Column start 0/end 127]</i></li>
+            <li>22h,00h,07h <i>[Page start 0/end 7]</i></li>
+          </ul>
+          <br> 
+          <h3>Repeat:</h3>
+          <ul>
+            <li>S CONDITION</li>
+            <li>78h <i>[Address + 0=write]</i></li>
+            <li>40h <i>[Display RAM start line from 0]</i></li>
+            <li>1024 bytes</li>
+            <li>P CONDITION</li>
+          </ul>
+          To do this, I'll work on the new <code>i2c_master_program.sv</code>.
+
           </article>
         </div>
       </section>
